@@ -62,16 +62,16 @@
             <div class="img-responsive">
                 <img class="item-image" src="css/images/no-img.png">
                 <span class="range-txt position-rage-bottom">
-        <strong><c:out value="${ elem.name }"/></strong>
+        <strong><c:out value="${ elem.race }"/></strong>
   </span>
                 <c:url var="editurl" value="/viewitemmodify">
                     <c:param name="action" value="EDIT"/>
-                    <c:param name="itemId" value="${elem.raceId}"/>
+                    <c:param name="id" value="${elem.id}"/>
                 </c:url>
                 <a class="item edit" ${param.itemType == "ALL" ? 'hidden="true"' : ''} href="${editurl}">Edit</a>
                 <c:url var="deleteurl" value="/viewitemmodify">
                     <c:param name="action" value="DELETE"/>
-                    <c:param name="itemId" value="${elem.raceId}"/>
+                    <c:param name="id" value="${elem.id}"/>
                 </c:url>
                 <a class="item delete" ${param.itemType == "ALL" ? 'hidden="true"' : ''} href="${deleteurl}"
                    title="">Delete</a>

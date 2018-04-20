@@ -1,23 +1,18 @@
 package by.dao.jdbc;
 
-import by.dao.jdbc.connection.ConnectionPool;
+import by.dao.jdbc.manager.EntityManager;
+import lombok.Getter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 
-public class BaseJdbcDao {
+class BaseJdbcDao {
 
     @Inject
-    private ConnectionPool connectionPool;
+    @Getter
+    private EntityManager entityManager;
 
-   private Logger logger = LoggerFactory.getLogger(getClass());
-
-    public ConnectionPool getConnectionPool() {
-        return connectionPool;
-    }
-
-   public Logger getLogger() {
-        return logger;
-    }
+    @Getter
+    private Logger logger = LoggerFactory.getLogger(getClass());
 }

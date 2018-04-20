@@ -17,14 +17,10 @@ public class ConnectionPoolImpl implements ConnectionPool {
 
     private BlockingQueue<Connection> connections = new ArrayBlockingQueue<>(20);
 
-    private ConnectionPoolImpl() {
-        try {
+    private ConnectionPoolImpl() throws SQLException {
             DriverManager.registerDriver(new com.mysql.jdbc.Driver());
         for (int i = 0; i < 20 ; i++) {
             connections.add(new PooledConnection(DriverManager.getConnection(URL, getProperties()),this));
-        }
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
     }
 

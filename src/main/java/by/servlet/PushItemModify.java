@@ -1,6 +1,5 @@
 package by.servlet;
 
-import by.Utils.MainUtils;
 import by.dao.old.ChangeInstance;
 import by.entity.event.Item;
 import by.entity.event.ItemFactory;
@@ -21,7 +20,6 @@ public class PushItemModify extends HttpServlet {
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         Item item = ItemFactory.createItem(Integer.valueOf(request.getParameter("itemType")));
-        MainUtils.setItemAttributes(item, request.getParameterMap());
         ChangeInstance dao = ItemFactory.getItemInstanceDao(Integer.valueOf(request.getParameter("itemType")));
         switch (request.getParameter("action")) {
             case "ADD":

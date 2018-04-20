@@ -1,24 +1,13 @@
 package by.entity;
 
-public class Race {
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-    private int raceId;
+import javax.persistence.Column;
 
-    private String name;
+@Data
+public class Race extends Entity{
 
-    public int getRaceId() {
-        return raceId;
-    }
-
-    public void setRaceId(int raceId) {
-        this.raceId = raceId;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
+    @Column(name = "race")
+    private String race;
 }
