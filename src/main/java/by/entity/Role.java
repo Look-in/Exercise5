@@ -6,4 +6,6 @@ import lombok.Data;
 public class Role extends Entity{
 
     private String role;
+
+    public static final String SQL = "SELECT * FROM Roles WHERE id=?;";
 }

@@ -8,10 +8,9 @@ import java.util.List;
 public class RaceJdbcDao extends BaseJdbcDao implements RaceDao {
 
     @Override
-    @SuppressWarnings("unchecked")
     public List<Race> getRaces() {
         String sql = "SELECT * FROM RACE;";
-        return getEntityManager().findAll(sql, Race.class);
+        return findAll(sql, Race.class);
     }
 
     @Override
