@@ -1,13 +1,14 @@
-package by.dao.jdbc;
+package by.dao.jdbc.user;
 
 import by.dao.UserDao;
+import by.dao.jdbc.BaseJdbcDao;
 import by.entity.User;
 
 public class UserJdbcDao extends BaseJdbcDao implements UserDao {
 
     @Override
     public User getUser(String userName) {
-        final String SQL = "SELECT * FROM users WHERE username=?;";
-        return find(SQL, User.class, userName);
+        String sql = "SELECT * FROM users WHERE username=?;";
+        return find(sql, User.class, userName);
     }
 }

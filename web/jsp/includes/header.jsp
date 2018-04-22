@@ -6,10 +6,9 @@
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <header>
     <h1>${param.action} ${param.type}</h1>
-    <c:if test="${pageContext.request.userPrincipal.name != null}">
+    <c:if test="${param.user != null}">
         <div>
             <c:url var="logoutUrl" value="/logout"/>
             <form action="${logoutUrl}" id="logout" method="post">
@@ -19,13 +18,10 @@
             </form>
         </div>
         <div>
-            <sec:authorize access="hasRole('USER')">
-                <c:set var="shoppingcart" value="shopping-cart"/>
-            </sec:authorize>
             <a class="user-form" href="${shoppingcart}"> Shopping cart ${countBasketItem}</a>
         </div>
     </c:if>
-    <c:if test="${pageContext.request.userPrincipal.name == null}">
+    <c:if test="${param.user == null}">
         <c:url var="url" value="loginForm"></c:url>
         <div>
             <a class="user-form" href="${url}" title="">Login</a>
@@ -35,9 +31,6 @@
         </div>
     </c:if>
     <div>
-        <sec:authorize access="hasRole('USER')">
-            <c:set var="ordercart" value="/shopping-cart/show-orders"/>
-        </sec:authorize>
         <a class="user-form" href="${ordercart}">Account</a>
     </div>
 </header>

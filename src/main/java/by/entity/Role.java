@@ -1,11 +1,16 @@
 package by.entity;
 
+import by.Utils.annotations.Entity;
+import by.Utils.annotations.Table;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+
 
 @Data
-public class Role extends Entity{
+@Entity
+@EqualsAndHashCode(callSuper=true)
+@Table(name = "Roles")
+public class Role extends DefaultEntity {
 
     private String role;
-
-    public static final String SQL = "SELECT * FROM Roles WHERE id=?;";
 }

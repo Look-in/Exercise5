@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface RateDao {
 
-    List<Rate> getRates(int raceId);
+    List<Rate> getRates();
 
     Rate getRate(int rateId);
 }

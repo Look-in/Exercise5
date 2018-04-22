@@ -7,23 +7,26 @@ import org.jboss.weld.environment.se.WeldContainer;
 public class RaceServiceTest {
 
     private Weld weld;
-    private WeldContainer container;
 
-    RaceDao raceDao;
+    private RaceService raceService;
 
-    UserService userService;
+    private UserService userService;
+
+    private RateService rateService;
 
     private void init() {
         weld = new Weld();
-        container = weld.initialize();
-        raceDao = container.instance().select(RaceDao.class).get();
+        WeldContainer container = weld.initialize();
+        raceService = container.instance().select(RaceService.class).get();
+        rateService = container.instance().select(RateService.class).get();
         userService = container.instance().select(UserService.class).get();
     }
 
     private void start() {
         System.out.println(userService.getRoles());
-        System.out.println(userService.getUser("user"));
-        System.out.println(raceDao.getRaces().toString());
+        System.out.println(raceService.getRaces().toString());
+        System.out.println(userService.checkPasswordAndGetUser("user","user"));
+        System.out.println(rateService.getRates().toString());
     }
 
     private void shutdown() {

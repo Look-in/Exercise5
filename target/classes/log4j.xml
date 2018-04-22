@@ -18,10 +18,9 @@
         </layout>
     </appender>
 
-    <logger name="by.dao.jdbc" additivity="false">
+    <logger name="by.dao" additivity="false">
         <level value="DEBUG" />
         <appender-ref ref="CONSOLE" />
-        <!-- <appender-ref ref="FILE" /> -->
     </logger>
 
     <root>

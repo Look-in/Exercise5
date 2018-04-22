@@ -20,9 +20,6 @@ public class SelectItemServlet extends javax.servlet.http.HttpServlet {
     @Inject
     RaceDao raceDao;
 
-    @Inject
-    UserService userRoleService;
-
     private void doRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         request.setAttribute("sortBy", AttributeToCompare.values());
         /*if (request.getParameter("sortingBy") != null) {

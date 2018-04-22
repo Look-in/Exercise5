@@ -27,7 +27,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User getUser(String userName) {
-        return userDao.getUser(userName);
+    public User checkPasswordAndGetUser(String userName, String password) {
+        User user = userDao.getUser(userName);
+        if (user != null && user.getPassword().equals(password)) {
+            return user;
+        }
+        return null;
     }
 }

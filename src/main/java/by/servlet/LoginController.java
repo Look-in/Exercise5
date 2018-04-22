@@ -19,7 +19,7 @@ import java.util.Map;
 public class LoginController extends javax.servlet.http.HttpServlet {
 
     @Inject
-    UserService userService;
+    private UserService userService;
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String username = request.getParameter("username");
@@ -32,8 +32,7 @@ public class LoginController extends javax.servlet.http.HttpServlet {
             messages.put("password", "Please enter password");
         }
         if (messages.isEmpty()) {
-            User user = new User();
-            //userService.find(username, password);
+            User user = userService.checkPasswordAndGetUser(username,password);
             if (user != null) {
                 request.getSession().setAttribute("user", user);
                 request.getRequestDispatcher("jsp/item_list.jsp").forward(request, response);

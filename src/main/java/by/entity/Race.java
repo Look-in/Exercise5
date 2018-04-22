@@ -1,13 +1,13 @@
 package by.entity;
 
 import lombok.Data;
-import lombok.NoArgsConstructor;
-
-import javax.persistence.Column;
+import by.Utils.annotations.Entity;
+import lombok.EqualsAndHashCode;
 
 @Data
-public class Race extends Entity{
+@Entity
+@EqualsAndHashCode(callSuper=true)
+public class Race extends DefaultEntity {
 
-    @Column(name = "race")
     private String race;
 }

@@ -1,13 +1,15 @@
 package by.entity;
 
+import by.Utils.annotations.Entity;
+import by.Utils.annotations.JoinColumn;
+import by.Utils.annotations.ManyToOne;
 import lombok.Data;
-import lombok.NoArgsConstructor;
-
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import lombok.EqualsAndHashCode;
 
 @Data
-public class User extends Entity{
+@Entity
+@EqualsAndHashCode(callSuper=true)
+public class User extends DefaultEntity {
 
     private String userName;
 
