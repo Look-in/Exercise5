@@ -1,12 +1,11 @@
 package by.service;
 
-import by.dao.RaceDao;
 import org.jboss.weld.environment.se.Weld;
 import org.jboss.weld.environment.se.WeldContainer;
 
 public class RaceServiceTest {
 
-    private Weld weld;
+   private Weld weld;
 
     private RaceService raceService;
 

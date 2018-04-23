@@ -3,7 +3,6 @@ package by.dao.jdbc.connection;
 import java.sql.*;
 import java.util.Map;
 import java.util.Properties;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
 
 class PooledConnection implements Connection {
@@ -17,7 +16,9 @@ class PooledConnection implements Connection {
         this.connectionPool = connectionPool;
     }
 
-    private ConcurrentHashMap<String, PreparedStatement> statements = new ConcurrentHashMap<>();
+    public void connectionClose() throws SQLException {
+        connection.close();
+    }
 
     @Override
     public void close() {
@@ -32,12 +33,7 @@ class PooledConnection implements Connection {
 
     @Override
     public PreparedStatement prepareStatement(String sql) throws SQLException {
-        PreparedStatement statement = statements.get(sql);
-        if (statement == null) {
-            statement = new MyStatement(connection.prepareStatement(sql));
-            statements.put(sql, statement);
-        }
-        return statement;
+        return connection.prepareStatement(sql);
     }
 
     @Override

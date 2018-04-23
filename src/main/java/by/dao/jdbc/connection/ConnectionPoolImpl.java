@@ -5,8 +5,8 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.BlockingQueue;
+import java.util.Queue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 @ApplicationScoped
 public class ConnectionPoolImpl implements ConnectionPool {
@@ -15,12 +15,18 @@ public class ConnectionPoolImpl implements ConnectionPool {
 
     private static Properties jdbcProp;
 
-    private BlockingQueue<Connection> connections = new ArrayBlockingQueue<>(20);
+    private int countConnections;
 
-    private ConnectionPoolImpl() throws SQLException {
-            DriverManager.registerDriver(new com.mysql.jdbc.Driver());
-        for (int i = 0; i < 20 ; i++) {
-            connections.add(new PooledConnection(DriverManager.getConnection(URL, getProperties()),this));
+    private Queue<Connection> connections = new LinkedBlockingQueue<>();
+
+    private ConnectionPoolImpl() {
+        countConnections = Integer.valueOf(getProperties().getProperty("countConnectionsPool"));
+        for (int i = 0; i < countConnections ; i++) {
+            try {
+                connections.add(new PooledConnection(DriverManager.getConnection(URL, getProperties()),this));
+            } catch (SQLException e) {
+                throw new RuntimeException(String.format("Can't get connection from %s. Error: ", URL)+e);
+            }
         }
     }
 
@@ -32,6 +38,7 @@ public class ConnectionPoolImpl implements ConnectionPool {
             jdbcProp.put("autoReconnect", "true");
             jdbcProp.put("characterEncoding", "UTF-8");
             jdbcProp.put("useUnicode", "true");
+            jdbcProp.put("countConnectionsPool", "20");
         }
         return jdbcProp;
     }
