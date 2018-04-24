@@ -1,5 +1,8 @@
 package by.service;
 
+import by.entity.Race;
+import by.entity.Rate;
+import by.entity.RateResult;
 import org.jboss.weld.environment.se.Weld;
 import org.jboss.weld.environment.se.WeldContainer;
 
@@ -26,6 +29,22 @@ public class RaceServiceTest {
         System.out.println(raceService.getRaces().toString());
         System.out.println(userService.checkPasswordAndGetUser("user","user"));
         System.out.println(rateService.getRates().toString());
+        Race race = new Race();
+        race.setId(1);
+        race.setRace("Забег тестовый");
+        raceService.pushRace(race);
+
+
+        Rate rate = new Rate();
+        RateResult rateResult = new RateResult();
+        rateResult.setRateResult("Будет играть");
+        rateResult.setId(2);
+        rate.setId(1);
+        rate.setRate("Новая ставка 2 к 1");
+        rate.setRateResult(rateResult);
+        rate.setRace(race);
+        //rate.setFoo(20);
+        rateService.pushRate(rate);
     }
 
     private void shutdown() {

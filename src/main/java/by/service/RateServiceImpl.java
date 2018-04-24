@@ -20,4 +20,13 @@ public class RateServiceImpl implements RateService {
     public Rate getRate(int raceId) {
         return rateDao.getRate(raceId);
     }
+
+    @Override
+    public void pushRate(Rate rate) {
+        if (rate.getId() == null) {
+            rateDao.create(rate);
+        } else {
+            rateDao.update(rate);
+        }
+    }
 }

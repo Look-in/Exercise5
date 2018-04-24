@@ -5,7 +5,6 @@ import by.Utils.annotations.Table;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-
 @Data
 @Entity
 @EqualsAndHashCode(callSuper=true)

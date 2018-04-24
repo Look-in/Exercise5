@@ -20,4 +20,8 @@ public class Rate extends DefaultEntity {
     @ManyToOne
     @JoinColumn(name = "result_id")
     private RateResult rateResult;
+
+ //   private Integer foo;
+
+   // private Integer fooFoo;
 }

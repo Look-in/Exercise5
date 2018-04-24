@@ -20,4 +20,13 @@ public class RaceServiceImpl implements RaceService {
     public Race getRace(int raceId) {
         return raceDao.getRace(raceId);
     }
+
+    @Override
+    public void pushRace(Race race) {
+        if (race.getId() == null) {
+            raceDao.create(race);
+        } else {
+            raceDao.update(race);
+        }
+    }
 }

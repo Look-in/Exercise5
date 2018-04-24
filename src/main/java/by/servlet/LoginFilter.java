@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.Map;
 
-@WebFilter("/*")
+@WebFilter("/fghg*")
 public class LoginFilter implements Filter {
 
     private static Map<String, List<String>> pages = new ConcurrentHashMap<>();

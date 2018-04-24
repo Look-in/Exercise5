@@ -1,6 +1,5 @@
 package by.servlet;
 
-import by.dao.old.ChangeInstance;
 import by.entity.event.Item;
 import by.entity.event.ItemFactory;
 
@@ -19,7 +18,7 @@ import java.io.IOException;
 public class PushItemModify extends HttpServlet {
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        Item item = ItemFactory.createItem(Integer.valueOf(request.getParameter("itemType")));
+     /*   Item item = ItemFactory.createItem(Integer.valueOf(request.getParameter("itemType")));
         ChangeInstance dao = ItemFactory.getItemInstanceDao(Integer.valueOf(request.getParameter("itemType")));
         switch (request.getParameter("action")) {
             case "ADD":
@@ -31,7 +30,7 @@ public class PushItemModify extends HttpServlet {
             case "DELETE":
                 dao.delete(item.getItemId());
                 break;
-        }
+        }*/
         request.getRequestDispatcher("selectitemservlet").forward(request, response);
     }
 

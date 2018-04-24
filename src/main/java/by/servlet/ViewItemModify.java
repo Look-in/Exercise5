@@ -24,7 +24,7 @@ public class ViewItemModify extends HttpServlet {
 
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        Item item = ItemFactory.createItem(Integer.valueOf(request.getParameter("itemType")));
+       /* Item item = ItemFactory.createItem(Integer.valueOf(request.getParameter("itemType")));
         if (request.getParameter("itemId") != null) {
             item.setItemId(Integer.valueOf(request.getParameter("itemId")));
             ItemFactory.getSelectItemDao(Integer.valueOf(request.getParameter("itemType"))).readItem(item);

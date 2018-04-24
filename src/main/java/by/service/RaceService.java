@@ -9,4 +9,6 @@ public interface RaceService {
     List<Race> getRaces();
 
     Race getRace(int raceId);
+
+    void pushRace(Race race);
 }

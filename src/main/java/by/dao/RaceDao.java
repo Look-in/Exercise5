@@ -4,7 +4,7 @@ import by.entity.Race;
 
 import java.util.List;
 
-public interface RaceDao {
+public interface RaceDao extends dao.ChangeInstance<Race> {
 
     List<Race> getRaces();
 
