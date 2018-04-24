@@ -1,6 +1,6 @@
 package by.dao.jdbc;
 
-import by.dao.jdbc.basecruid.BaseEntityFinder;
+import by.dao.jdbc.basecruid.BaseEntityReader;
 
-public class BaseJdbcDao extends BaseEntityFinder{
+public class BaseJdbcDao extends BaseEntityReader {
 }

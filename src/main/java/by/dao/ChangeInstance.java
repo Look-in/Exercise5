@@ -1,4 +1,4 @@
-package dao;
+package by.dao;
 
 /**
  * <code>DAO</code> For change instances<br>
@@ -8,21 +8,21 @@ package dao;
 public interface ChangeInstance<T> {
 
     /**
-     * Добавляет единицу товара.
+     * Добавляет единицу сущности.
      *
      * @param entity сущность
      */
     void create(T entity);
 
     /**
-     * Обновляет позицию товара.
+     * Обновляет сущность.
      *
      * @param entity сущность
      */
     void update(T entity);
 
     /**
-     * Удаляет позицию товара.
+     * Удаляет сущность.
      *
      * @param id сущности
      */

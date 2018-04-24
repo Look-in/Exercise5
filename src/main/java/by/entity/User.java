@@ -1,10 +1,10 @@
 package by.entity;
 
-import by.Utils.annotations.Entity;
-import by.Utils.annotations.JoinColumn;
-import by.Utils.annotations.ManyToOne;
+import by.Utils.annotations.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+
+import java.util.List;
 
 @Data
 @Entity
@@ -18,4 +18,10 @@ public class User extends DefaultEntity {
     private Role role;
 
     private String password;
+
+    @OneToMany(fetch = OneToMany.FetchType.LAZY)
+    @JoinTable(name = "user_rates",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "rate_id"))
+    private List<Rate> rates;
 }

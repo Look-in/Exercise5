@@ -21,7 +21,5 @@ public class Rate extends DefaultEntity {
     @JoinColumn(name = "result_id")
     private RateResult rateResult;
 
- //   private Integer foo;
 
-   // private Integer fooFoo;
 }

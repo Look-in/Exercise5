@@ -11,4 +11,9 @@ public class UserJdbcDao extends BaseJdbcDao implements UserDao {
         String sql = "SELECT * FROM users WHERE username=?;";
         return find(sql, User.class, userName);
     }
+
+    @Override
+    public User getUserRates(User user) {
+     return getProxy(User.class);
+    }
 }

@@ -12,4 +12,6 @@ public interface UserService {
     Role getRole(int roleId);
 
     User checkPasswordAndGetUser(String userName, String password);
+
+    User getUserRates(User user);
 }

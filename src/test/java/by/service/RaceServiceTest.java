@@ -3,6 +3,7 @@ package by.service;
 import by.entity.Race;
 import by.entity.Rate;
 import by.entity.RateResult;
+import by.entity.User;
 import org.jboss.weld.environment.se.Weld;
 import org.jboss.weld.environment.se.WeldContainer;
 
@@ -27,7 +28,10 @@ public class RaceServiceTest {
     private void start() {
         System.out.println(userService.getRoles());
         System.out.println(raceService.getRaces().toString());
-        System.out.println(userService.checkPasswordAndGetUser("user","user"));
+        User user = userService.checkPasswordAndGetUser("user","user");
+        System.out.println(user.toString());
+        User userProxy= userService.getUserRates(user);
+        System.out.println(userProxy.toString());
         System.out.println(rateService.getRates().toString());
         Race race = new Race();
         race.setId(1);
@@ -35,7 +39,7 @@ public class RaceServiceTest {
         raceService.pushRace(race);
 
 
-        Rate rate = new Rate();
+     /*   Rate rate = new Rate();
         RateResult rateResult = new RateResult();
         rateResult.setRateResult("Будет играть");
         rateResult.setId(2);
@@ -44,7 +48,7 @@ public class RaceServiceTest {
         rate.setRateResult(rateResult);
         rate.setRace(race);
         //rate.setFoo(20);
-        rateService.pushRate(rate);
+        rateService.pushRate(rate);*/
     }
 
     private void shutdown() {
