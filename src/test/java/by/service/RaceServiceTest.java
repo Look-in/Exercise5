@@ -26,10 +26,17 @@ public class RaceServiceTest {
     }
 
     private void start() {
-        System.out.println(userService.getRoles());
-        System.out.println(raceService.getRaces().toString());
+    	System.out.println("Тест");
+      //  System.out.println(userService.getRoles());
+       // System.out.println(raceService.getRaces().toString());
         User user = userService.checkPasswordAndGetUser("user","user");
-        System.out.println(user.toString());
+        System.out.println(user.foo());
+        System.out.println(user.getRates());
+        System.out.println(user.foo());
+        user.setRates(user.getRates());
+        System.out.println(user.foo());
+        //System.out.println(user.toString());
+       
  /*       System.out.println(rateService.getRates().toString());
         Race race = new Race();
         race.setId(1);

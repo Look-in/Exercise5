@@ -4,47 +4,70 @@ import by.Utils.ReflectionUtils;
 import by.Utils.annotations.*;
 import javassist.util.proxy.MethodHandler;
 import javassist.util.proxy.ProxyFactory;
+import jdk.nashorn.internal.runtime.regexp.joni.Regex;
 import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+
 
 @Slf4j
 public class BaseEntityReader extends BaseEntityUpdater {
 
-    protected <T> T getProxy(Class<T> clazz) {
-        List<Field> lazyFields = ReflectionUtils.getAllClassFields(new ArrayList<>(), clazz)
-                .stream().filter(e -> e.getAnnotation(OneToMany.class) != null
-                && e.getAnnotation(OneToMany.class).fetch() == OneToMany.FetchType.LAZY)
+    private String upperCaseFirst(String value) {
+        char[] array = value.toCharArray();
+        array[0] = Character.toUpperCase(array[0]);
+        return new String(array);
+    }
+
+    private Class<?> getGenericParameterField(Field field) {
+        ParameterizedType genericSuperclass = (ParameterizedType) field.getGenericType();
+        Type type = genericSuperclass.getActualTypeArguments()[0];
+        return (type instanceof Class ? (Class<?>) type : (Class<?>) ((ParameterizedType) type).getRawType());
+    }
+
+    @SuppressWarnings("unchecked")
+    private <T> T getProxy(Class<T> clazz) {
+        List<Field> lazyFields = ReflectionUtils.getAllClassFields(new ArrayList<>(), clazz).stream()
+                .filter(e -> e.getAnnotation(OneToMany.class) != null &&
+                        e.getAnnotation(OneToMany.class).fetch() == OneToMany.FetchType.LAZY)
                 .collect(Collectors.toList());
         ProxyFactory factory = new ProxyFactory();
         factory.setSuperclass(clazz);
-        factory.setFilter(m -> {
-            // ignore finalize()
-            return !m.getName().equals("finalize");
-        });
         MethodHandler mi = (self, m, proceed, args) -> {
-            System.out.println(m.getName().split("^get+")[0]);
-            System.out.println("Invoking method " + m.getName());
-            return proceed.invoke(self, args);  // execute the original method.
+            String regex = "^get+";
+            Pattern pattern = Pattern.compile(regex);
+            Matcher matcher = pattern.matcher(m.getName());
+            if (matcher.find()) {
+                for (Field field : lazyFields) {
+                    if (matcher.replaceFirst("").equals(upperCaseFirst(field.getName()))) {
+                        return findAll(getGenericParameterField(field));
+                    }
+                }
+            }
+            return proceed.invoke(self, args); // execute the original method.
         };
-        T object = null;
+        T object;
         try {
             object = (T) factory.create(new Class[0], new Object[0], mi);
-        } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
-            e.printStackTrace();
+        } catch (NoSuchMethodException | IllegalArgumentException | InstantiationException | IllegalAccessException
+                | InvocationTargetException e) {
+            log.error("Error creating proxy object: " + e);
+            throw new RuntimeException("Error creating proxy object: " + e);
         }
         return object;
     }
 
-    private PreparedStatement selectPreparedStatement(String sql, Connection connection, Object id) throws SQLException {
+    private PreparedStatement selectPreparedStatement(String sql, Connection connection, Object id)
+            throws SQLException {
         PreparedStatement statement = connection.prepareStatement(sql);
         statement.setObject(1, id);
         return statement;
@@ -103,15 +126,15 @@ public class BaseEntityReader extends BaseEntityUpdater {
                 object = getEntityResultSet(rs, tClass, connection);
             }
         } catch (Exception exc) {
-            //getLogger().error("Error reading User from DB:" + exc.getMessage());
-            throw new RuntimeException(
-                    "Error reading User from DB:" + exc.getMessage());
+            log.error("Error reading User from DB:" + exc.getMessage());
+            throw new RuntimeException("Error reading User from DB:" + exc.getMessage());
         }
         return object;
     }
 
     private <T> T getEntityResultSet(ResultSet rs, Class<T> tClass, Connection connection) {
-        if (tClass.getAnnotation(Entity.class) == null) return null;
+        if (tClass.getAnnotation(Entity.class) == null)
+            return null;
         T object = getProxy(tClass);
         List<Field> fields = ReflectionUtils.getAllClassFields(new ArrayList<>(), tClass);
         for (Field field : fields) {

@@ -14,6 +14,6 @@ public class UserJdbcDao extends BaseJdbcDao implements UserDao {
 
     @Override
     public User getUserRates(User user) {
-     return getProxy(User.class);
+     return null;
     }
 }

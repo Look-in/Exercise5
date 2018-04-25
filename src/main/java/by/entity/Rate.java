@@ -11,7 +11,12 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper=true)
 public class Rate extends DefaultEntity {
 
-    private String rate;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -3888143097328446772L;
+
+	private String rate;
 
     @ManyToOne
     @JoinColumn(name = "race_id")
