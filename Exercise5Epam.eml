@@ -18,6 +18,10 @@
 		<level name="Maven: org.slf4j:slf4j-api:1.7.25" value="project"/>
 		<level name="Maven: log4j:log4j:1.2.17" value="project"/>
 		<level name="Maven: org.projectlombok:lombok:1.16.20" value="project"/>
-		<level name="Maven: javax.persistence:persistence-api:1.0" value="project"/>
+		<level name="Maven: cglib:cglib:3.2.6" value="project"/>
+		<level name="Maven: org.ow2.asm:asm:6.0" value="project"/>
+		<level name="Maven: org.apache.ant:ant:1.9.6" value="project"/>
+		<level name="Maven: org.apache.ant:ant-launcher:1.9.6" value="project"/>
+		<level name="Maven: org.javassist:javassist:3.22.0-GA" value="project"/>
 	</levels>
 </component>

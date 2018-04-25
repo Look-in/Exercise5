@@ -13,11 +13,17 @@ import java.lang.reflect.Method;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Slf4j
 public class BaseEntityReader extends BaseEntityUpdater {
 
     protected <T> T getProxy(Class<T> clazz) {
+        List<Field> lazyFields = ReflectionUtils.getAllClassFields(new ArrayList<>(), clazz)
+                .stream().filter(e -> e.getAnnotation(OneToMany.class) != null
+                && e.getAnnotation(OneToMany.class).fetch() == OneToMany.FetchType.LAZY)
+                .collect(Collectors.toList());
         ProxyFactory factory = new ProxyFactory();
         factory.setSuperclass(clazz);
         factory.setFilter(m -> {
@@ -25,6 +31,8 @@ public class BaseEntityReader extends BaseEntityUpdater {
             return !m.getName().equals("finalize");
         });
         MethodHandler mi = (self, m, proceed, args) -> {
+            System.out.println(m.getName().split("^get+")[0]);
+            System.out.println("Invoking method " + m.getName());
             return proceed.invoke(self, args);  // execute the original method.
         };
         T object = null;
@@ -34,34 +42,6 @@ public class BaseEntityReader extends BaseEntityUpdater {
             e.printStackTrace();
         }
         return object;
-    }
-
-    private static class LoggingInvocationHandler<T>
-            implements InvocationHandler {
-        final T underlying;
-
-        public LoggingInvocationHandler(T underlying) {
-            this.underlying = underlying;
-        }
-
-        @Override
-        public Object invoke(Object proxy, Method method,
-                             Object[] args) throws Throwable {
-            StringBuffer sb = new StringBuffer();
-            sb.append(method.getName()); sb.append("(");
-            for (int i=0; args != null && i<args.length; i++) {
-                if (i != 0)
-                    sb.append(", ");
-                sb.append(args[i]);
-            }
-            sb.append(")");
-            Object ret = method.invoke(underlying, args);
-            if (ret != null) {
-                sb.append(" -> "); sb.append(ret);
-            }
-            System.out.println(sb);
-            return ret;
-        }
     }
 
     private PreparedStatement selectPreparedStatement(String sql, Connection connection, Object id) throws SQLException {
@@ -132,8 +112,9 @@ public class BaseEntityReader extends BaseEntityUpdater {
 
     private <T> T getEntityResultSet(ResultSet rs, Class<T> tClass, Connection connection) {
         if (tClass.getAnnotation(Entity.class) == null) return null;
-        T object = ReflectionUtils.getEntity(tClass);
-        for (Field field : ReflectionUtils.getAllClassFields(new ArrayList<>(), tClass)) {
+        T object = getProxy(tClass);
+        List<Field> fields = ReflectionUtils.getAllClassFields(new ArrayList<>(), tClass);
+        for (Field field : fields) {
             if ((field.getModifiers() & java.lang.reflect.Modifier.FINAL) == java.lang.reflect.Modifier.FINAL) {
                 continue;
             }

@@ -1,6 +1,7 @@
 package by.entity;
 
 import by.Utils.annotations.*;
+import by.Utils.annotations.OneToMany.FetchType;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -19,7 +20,7 @@ public class User extends DefaultEntity {
 
     private String password;
 
-    @OneToMany(fetch = OneToMany.FetchType.LAZY)
+    @OneToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "user_rates",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "rate_id"))
