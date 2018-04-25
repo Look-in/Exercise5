@@ -7,7 +7,9 @@ import javassist.util.proxy.ProxyFactory;
 import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +34,34 @@ public class BaseEntityReader extends BaseEntityUpdater {
             e.printStackTrace();
         }
         return object;
+    }
+
+    private static class LoggingInvocationHandler<T>
+            implements InvocationHandler {
+        final T underlying;
+
+        public LoggingInvocationHandler(T underlying) {
+            this.underlying = underlying;
+        }
+
+        @Override
+        public Object invoke(Object proxy, Method method,
+                             Object[] args) throws Throwable {
+            StringBuffer sb = new StringBuffer();
+            sb.append(method.getName()); sb.append("(");
+            for (int i=0; args != null && i<args.length; i++) {
+                if (i != 0)
+                    sb.append(", ");
+                sb.append(args[i]);
+            }
+            sb.append(")");
+            Object ret = method.invoke(underlying, args);
+            if (ret != null) {
+                sb.append(" -> "); sb.append(ret);
+            }
+            System.out.println(sb);
+            return ret;
+        }
     }
 
     private PreparedStatement selectPreparedStatement(String sql, Connection connection, Object id) throws SQLException {

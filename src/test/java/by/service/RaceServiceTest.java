@@ -32,11 +32,11 @@ public class RaceServiceTest {
         System.out.println(user.toString());
         User userProxy= userService.getUserRates(user);
         System.out.println(userProxy.toString());
-        System.out.println(rateService.getRates().toString());
+ /*       System.out.println(rateService.getRates().toString());
         Race race = new Race();
         race.setId(1);
         race.setRace("Забег тестовый");
-        raceService.pushRace(race);
+        raceService.pushRace(race);*/
 
 
      /*   Rate rate = new Rate();
