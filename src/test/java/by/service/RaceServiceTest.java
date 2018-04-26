@@ -33,7 +33,7 @@ public class RaceServiceTest {
         User user = null;
         User user1 = null;
         User user2 = null;
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 1000; i++) {
             user = userService.checkPasswordAndGetUser("user","user");
             user1 = userService.checkPasswordAndGetUser("user1","user1");
             user2 = userService.checkPasswordAndGetUser("user2","user2");
