@@ -13,6 +13,11 @@
           <element id="library" level="project" name="Maven: log4j:log4j:1.2.17" />
           <element id="library" level="project" name="Maven: org.jboss.weld.se:weld-se:2.0.3.Final" />
           <element id="library" level="project" name="Maven: org.jboss.weld.servlet:weld-servlet:2.0.3.Final" />
+          <element id="library" level="project" name="Maven: cglib:cglib:3.2.6" />
+          <element id="library" level="project" name="Maven: org.apache.ant:ant:1.9.6" />
+          <element id="library" level="project" name="Maven: org.apache.ant:ant-launcher:1.9.6" />
+          <element id="library" level="project" name="Maven: org.ow2.asm:asm:6.0" />
+          <element id="library" level="project" name="Maven: org.javassist:javassist:3.22.0-GA" />
         </element>
       </element>
       <element id="javaee-facet-resources" facet="Exercise5Epam/web/Web" />

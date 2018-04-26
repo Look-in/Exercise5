@@ -4,7 +4,6 @@ import by.Utils.ReflectionUtils;
 import by.Utils.annotations.*;
 import javassist.util.proxy.MethodHandler;
 import javassist.util.proxy.ProxyFactory;
-import jdk.nashorn.internal.runtime.regexp.joni.Regex;
 import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.Field;
@@ -17,7 +16,6 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-
 
 @Slf4j
 public class BaseEntityReader extends BaseEntityUpdater {
@@ -49,7 +47,16 @@ public class BaseEntityReader extends BaseEntityUpdater {
             if (matcher.find()) {
                 for (Field field : lazyFields) {
                     if (matcher.replaceFirst("").equals(upperCaseFirst(field.getName()))) {
-                        return findAll(getGenericParameterField(field));
+                        field.setAccessible(true);
+                        if (field.get(self) == null) {
+                            log.debug(String.format("Start lazy initialization: Class [%s] Field [%s]",
+                                    clazz.getSimpleName(), field.getName()));
+                            JoinTable joinTable = field.getAnnotation(JoinTable.class);
+                            String sql = sqlGenerationOneToMany(joinTable.name(),
+                                    joinTable.joinColumns().name(), joinTable.inverseJoinColumns().name());
+                            field.set(self, findInversedColumnElements(getGenericParameterField(field),
+                                    sql, getIdValueFromObject(clazz, (T) self)));
+                        }
                     }
                 }
             }
@@ -60,10 +67,45 @@ public class BaseEntityReader extends BaseEntityUpdater {
             object = (T) factory.create(new Class[0], new Object[0], mi);
         } catch (NoSuchMethodException | IllegalArgumentException | InstantiationException | IllegalAccessException
                 | InvocationTargetException e) {
-            log.error("Error creating proxy object: " + e);
-            throw new RuntimeException("Error creating proxy object: " + e);
+            String error = String.format("Error creating proxy object: %s", e);
+            log.error(error);
+            throw new RuntimeException(error);
         }
         return object;
+    }
+
+    private <T> List<T> findInversedColumnElements(Class<T> tClass, String sql, Object id) {
+        List<T> elements = new ArrayList<>();
+        try (Connection connection = getConnectionPool().getConnection();
+             PreparedStatement statement = selectPreparedStatement(sql, connection, id);
+             ResultSet rs = statement.executeQuery()) {
+            while (rs.next()) {
+                elements.add(find(tClass, rs.getString("id")));
+            }
+        } catch (SQLException e) {
+            String error = String.format("Error finding InversedColumnElements: %s", e);
+            log.error(error);
+            throw new RuntimeException(error);
+        }
+        return elements;
+    }
+
+    private <T> Object getIdValueFromObject(Class<T> tClass, T object) throws IllegalAccessException {
+        List<Field> fields = ReflectionUtils.getAllClassFields(new ArrayList<>(), tClass);
+        for (Field field : fields) {
+            if (field.getAnnotation(Id.class) != null) {
+                field.setAccessible(true);
+                return field.get(object);
+            }
+        }
+        return null;
+    }
+
+    private String sqlGenerationOneToMany(String joinTableName, String joinColumnName, String inverseJoinColumnName) {
+        String sql = String.format("Select %s as id from %s where %s = ?;", inverseJoinColumnName,
+                joinTableName, joinColumnName);
+        log.debug("Create SQL: {}", sql);
+        return sql;
     }
 
     private PreparedStatement selectPreparedStatement(String sql, Connection connection, Object id)
@@ -78,7 +120,9 @@ public class BaseEntityReader extends BaseEntityUpdater {
         try (Connection connection = getConnectionPool().getConnection()) {
             object = findByConnection(sql, tClass, id, connection);
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            String error = String.format("Error finding element Class: %s by id = %s + message: %s", tClass.getSimpleName(), id, e);
+            log.error(error);
+            throw new RuntimeException(error);
         }
         return object;
     }
@@ -96,7 +140,9 @@ public class BaseEntityReader extends BaseEntityUpdater {
                 entities.add(getEntityResultSet(rs, tClass, connection));
             }
         } catch (SQLException exc) {
-            throw new RuntimeException(exc);
+            String error = String.format("Error finding list of element Class: %s + message: %s", tClass.getSimpleName(), exc);
+            log.error(error);
+            throw new RuntimeException(error);
         }
         return entities;
     }
@@ -106,12 +152,31 @@ public class BaseEntityReader extends BaseEntityUpdater {
     }
 
     private String sqlGeneration(Class<?> tClass, boolean requiredId) {
+        List<Field> fields = ReflectionUtils.getAllClassFields(new ArrayList<>(), tClass);
+        String idFieldName = null;
+        StringBuilder fieldNames = new StringBuilder();
+        for (Field field : fields) {
+            if (field.getAnnotation(OneToMany.class) != null &&
+                    field.getAnnotation(OneToMany.class).fetch() == OneToMany.FetchType.LAZY) {
+                continue;
+            }
+            String fieldAnnotatedName = getFieldAnnotatedName(field);
+            if (field.getAnnotation(Id.class) != null) {
+                idFieldName = fieldAnnotatedName;
+            }
+            if (fieldNames.length() == 0) {
+                fieldNames.append(fieldAnnotatedName);
+            } else {
+                fieldNames.append(", ");
+                fieldNames.append(fieldAnnotatedName);
+            }
+        }
         Table table = tClass.getAnnotation(Table.class);
         String tableName = (table != null ? table.name() : tClass.getSimpleName());
         StringBuilder str = new StringBuilder();
-        str.append(String.format("Select * from %s", tableName));
+        str.append(String.format("Select %s from %s", fieldNames.toString(), tableName));
         if (requiredId) {
-            str.append(" where id = ?;");
+            str.append(String.format(" where %s = ?;", idFieldName));
         }
         String sql = str.toString();
         log.debug("Create SQL: {}", sql);
@@ -126,10 +191,24 @@ public class BaseEntityReader extends BaseEntityUpdater {
                 object = getEntityResultSet(rs, tClass, connection);
             }
         } catch (Exception exc) {
-            log.error("Error reading User from DB:" + exc.getMessage());
-            throw new RuntimeException("Error reading User from DB:" + exc.getMessage());
+            String error = String.format("Error reading %s from DB by id = %s. Error: %s", tClass.getSimpleName(), id, exc);
+            log.error(error);
+            throw new RuntimeException(error);
         }
         return object;
+    }
+
+    private String getFieldAnnotatedName(Field field) {
+        Column column = field.getAnnotation(Column.class);
+        JoinColumn joinColumn = field.getAnnotation(JoinColumn.class);
+        if (ReflectionUtils.isPrimitiveOrWrapperType(field.getType())) {
+            return (column != null ? column.name() : field.getName());
+        } else {
+            if (field.getAnnotation(ManyToOne.class) != null) {
+                return (joinColumn != null ? joinColumn.name() : field.getName());
+            }
+        }
+        return field.getName();
     }
 
     private <T> T getEntityResultSet(ResultSet rs, Class<T> tClass, Connection connection) {
@@ -141,17 +220,13 @@ public class BaseEntityReader extends BaseEntityUpdater {
             if ((field.getModifiers() & java.lang.reflect.Modifier.FINAL) == java.lang.reflect.Modifier.FINAL) {
                 continue;
             }
-            Column column = field.getAnnotation(Column.class);
-            JoinColumn joinColumn = field.getAnnotation(JoinColumn.class);
             Object fieldObject = null;
             try {
-                String name;
+                String name = getFieldAnnotatedName(field);
                 if (ReflectionUtils.isPrimitiveOrWrapperType(field.getType())) {
-                    name = (column != null ? column.name() : field.getName());
                     fieldObject = ReflectionUtils.getValueFromResultSet(rs, name);
                 } else {
                     if (field.getAnnotation(ManyToOne.class) != null) {
-                        name = (joinColumn != null ? joinColumn.name() : field.getName());
                         fieldObject = findByConnection(sqlGeneration(field.getType(), true), field.getType(),
                                 ReflectionUtils.getValueFromResultSet(rs, name), connection);
                     }
@@ -159,7 +234,9 @@ public class BaseEntityReader extends BaseEntityUpdater {
                 field.setAccessible(true);
                 field.set(object, fieldObject);
             } catch (Exception e) {
-                throw new RuntimeException(e);
+                String error = String.format("Error iteration of ResultSet: %s. Error: %s", tClass.getSimpleName(), e);
+                log.error(error);
+                throw new RuntimeException(error);
             }
         }
         return object;

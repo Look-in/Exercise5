@@ -39,7 +39,6 @@ public class ReflectionUtils {
         return fields;
     }
 
-
     public static  <T> T getEntity(Class<T> tClass) {
         try {
             return tClass.newInstance();

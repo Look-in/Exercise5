@@ -26,7 +26,6 @@ public class User extends DefaultEntity {
             inverseJoinColumns = @JoinColumn(name = "rate_id"))
     private List<Rate> rates;
 
-
     public List<Rate> foo() {
         return rates;
     }

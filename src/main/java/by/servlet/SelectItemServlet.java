@@ -1,6 +1,7 @@
 package by.servlet;
 
 import by.dao.RaceDao;
+import by.entity.User;
 import by.entity.event.AttributeToCompare;
 import by.service.UserService;
 
@@ -20,11 +21,18 @@ public class SelectItemServlet extends javax.servlet.http.HttpServlet {
     @Inject
     RaceDao raceDao;
 
+    @Inject
+    UserService userService;
+
     private void doRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         request.setAttribute("sortBy", AttributeToCompare.values());
         /*if (request.getParameter("sortingBy") != null) {
             ItemComparator.compare(item, AttributeToCompare.valueOf(request.getParameter("sortingBy")));
         }*/
+        User user = userService.checkPasswordAndGetUser("user","user");
+        System.out.println(user.foo());
+        System.out.println(user.getRates());
+        System.out.println(user.foo());
         request.setAttribute("race", raceDao.getRaces());
         request.getRequestDispatcher("jsp/item_list.jsp").forward(request, response);
     }
