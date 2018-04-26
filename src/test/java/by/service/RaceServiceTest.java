@@ -29,10 +29,21 @@ public class RaceServiceTest {
     	System.out.println("Тест");
      //   System.out.println(userService.getRoles());
      //   System.out.println(raceService.getRaces().toString());
-        User user = userService.checkPasswordAndGetUser("user","user");
-        System.out.println(user.foo());
-        System.out.println(user.getRates());
-        System.out.println(user.foo());
+         Long timeJsp = System.currentTimeMillis();
+        User user = null;
+        User user1 = null;
+        User user2 = null;
+        for (int i = 0; i < 10; i++) {
+            user = userService.checkPasswordAndGetUser("user","user");
+            user1 = userService.checkPasswordAndGetUser("user1","user1");
+            user2 = userService.checkPasswordAndGetUser("user2","user2");
+            user.getRates();
+        }
+        float delta = (float)(System.currentTimeMillis() - timeJsp)/1000;
+        System.out.println(delta);
+        System.out.println(user.toString());
+        System.out.println(user1.toString());
+        System.out.println(user2.toString());
          //System.out.println(user.toString());
        
  /*       System.out.println(rateService.getRates().toString());

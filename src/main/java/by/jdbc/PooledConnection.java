@@ -3,6 +3,7 @@ package by.jdbc;
 import java.sql.*;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
 
 class PooledConnection implements Connection {
@@ -10,6 +11,8 @@ class PooledConnection implements Connection {
     private ConnectionPool connectionPool;
 
     private Connection connection;
+
+    private Map<String, PreparedStatement> statements = new ConcurrentHashMap<>();
 
     public PooledConnection(Connection connection, ConnectionPool connectionPool) {
         this.connection = connection;
@@ -33,7 +36,12 @@ class PooledConnection implements Connection {
 
     @Override
     public PreparedStatement prepareStatement(String sql) throws SQLException {
-        return connection.prepareStatement(sql);
+        PreparedStatement statement = statements.get(sql);
+        if (statement == null) {
+            statement = new CashStatement(connection.prepareStatement(sql));
+            statements.put(sql, statement);
+        }
+        return statement;
     }
 
     @Override

@@ -1,6 +1,5 @@
 package by.dao.jdbc.basecruid;
 
-import by.Utils.ReflectionUtils;
 import by.Utils.annotations.*;
 import lombok.extern.slf4j.Slf4j;
 

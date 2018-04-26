@@ -1,6 +1,6 @@
 package by.dao.jdbc.basecruid;
 
-import by.Utils.ReflectionUtils;
+import by.Utils.MainUtils;
 import by.Utils.annotations.*;
 import javassist.util.proxy.MethodHandler;
 import javassist.util.proxy.ProxyFactory;
@@ -8,11 +8,11 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -20,17 +20,9 @@ import java.util.stream.Collectors;
 @Slf4j
 public class BaseEntityReader extends BaseEntityUpdater {
 
-    private String upperCaseFirst(String value) {
-        char[] array = value.toCharArray();
-        array[0] = Character.toUpperCase(array[0]);
-        return new String(array);
-    }
+    private Map<Class<?>, String> classQueriesById = new ConcurrentHashMap<>();
 
-    private Class<?> getGenericParameterField(Field field) {
-        ParameterizedType genericSuperclass = (ParameterizedType) field.getGenericType();
-        Type type = genericSuperclass.getActualTypeArguments()[0];
-        return (type instanceof Class ? (Class<?>) type : (Class<?>) ((ParameterizedType) type).getRawType());
-    }
+    private Map<Class<?>, String> classQueries = new ConcurrentHashMap<>();
 
     @SuppressWarnings("unchecked")
     private <T> T getProxy(Class<T> clazz) {
@@ -46,7 +38,7 @@ public class BaseEntityReader extends BaseEntityUpdater {
             Matcher matcher = pattern.matcher(m.getName());
             if (matcher.find()) {
                 for (Field field : lazyFields) {
-                    if (matcher.replaceFirst("").equals(upperCaseFirst(field.getName()))) {
+                    if (matcher.replaceFirst("").equals(MainUtils.upperCaseFirst(field.getName()))) {
                         field.setAccessible(true);
                         if (field.get(self) == null) {
                             log.debug(String.format("Start lazy initialization: Class [%s] Field [%s]",
@@ -54,8 +46,8 @@ public class BaseEntityReader extends BaseEntityUpdater {
                             JoinTable joinTable = field.getAnnotation(JoinTable.class);
                             String sql = sqlGenerationOneToMany(joinTable.name(),
                                     joinTable.joinColumns().name(), joinTable.inverseJoinColumns().name());
-                            field.set(self, findInversedColumnElements(getGenericParameterField(field),
-                                    sql, getIdValueFromObject(clazz, (T) self)));
+                            field.set(self, findInversedColumnElements(ReflectionUtils.getGenericParameterField(field),
+                                    sql, ReflectionUtils.getIdValueFromObject(clazz, (T) self)));
                         }
                     }
                 }
@@ -88,17 +80,6 @@ public class BaseEntityReader extends BaseEntityUpdater {
             throw new RuntimeException(error);
         }
         return elements;
-    }
-
-    private <T> Object getIdValueFromObject(Class<T> tClass, T object) throws IllegalAccessException {
-        List<Field> fields = ReflectionUtils.getAllClassFields(new ArrayList<>(), tClass);
-        for (Field field : fields) {
-            if (field.getAnnotation(Id.class) != null) {
-                field.setAccessible(true);
-                return field.get(object);
-            }
-        }
-        return null;
     }
 
     private String sqlGenerationOneToMany(String joinTableName, String joinColumnName, String inverseJoinColumnName) {
@@ -152,6 +133,11 @@ public class BaseEntityReader extends BaseEntityUpdater {
     }
 
     private String sqlGeneration(Class<?> tClass, boolean requiredId) {
+        String sql = requiredId ? classQueriesById.get(tClass) : classQueries.get(tClass);
+        if (sql != null) {
+            log.debug("Get SQL from the cash: {}", sql);
+            return sql;
+        }
         List<Field> fields = ReflectionUtils.getAllClassFields(new ArrayList<>(), tClass);
         String idFieldName = null;
         StringBuilder fieldNames = new StringBuilder();
@@ -160,7 +146,7 @@ public class BaseEntityReader extends BaseEntityUpdater {
                     field.getAnnotation(OneToMany.class).fetch() == OneToMany.FetchType.LAZY) {
                 continue;
             }
-            String fieldAnnotatedName = getFieldAnnotatedName(field);
+            String fieldAnnotatedName = ReflectionUtils.getFieldAnnotatedName(field);
             if (field.getAnnotation(Id.class) != null) {
                 idFieldName = fieldAnnotatedName;
             }
@@ -178,7 +164,12 @@ public class BaseEntityReader extends BaseEntityUpdater {
         if (requiredId) {
             str.append(String.format(" where %s = ?;", idFieldName));
         }
-        String sql = str.toString();
+        sql = str.toString();
+        if (requiredId) {
+            classQueriesById.put(tClass, sql);
+        } else {
+            classQueries.put(tClass, sql);
+        }
         log.debug("Create SQL: {}", sql);
         return sql;
     }
@@ -198,19 +189,6 @@ public class BaseEntityReader extends BaseEntityUpdater {
         return object;
     }
 
-    private String getFieldAnnotatedName(Field field) {
-        Column column = field.getAnnotation(Column.class);
-        JoinColumn joinColumn = field.getAnnotation(JoinColumn.class);
-        if (ReflectionUtils.isPrimitiveOrWrapperType(field.getType())) {
-            return (column != null ? column.name() : field.getName());
-        } else {
-            if (field.getAnnotation(ManyToOne.class) != null) {
-                return (joinColumn != null ? joinColumn.name() : field.getName());
-            }
-        }
-        return field.getName();
-    }
-
     private <T> T getEntityResultSet(ResultSet rs, Class<T> tClass, Connection connection) {
         if (tClass.getAnnotation(Entity.class) == null)
             return null;
@@ -222,7 +200,7 @@ public class BaseEntityReader extends BaseEntityUpdater {
             }
             Object fieldObject = null;
             try {
-                String name = getFieldAnnotatedName(field);
+                String name = ReflectionUtils.getFieldAnnotatedName(field);
                 if (ReflectionUtils.isPrimitiveOrWrapperType(field.getType())) {
                     fieldObject = ReflectionUtils.getValueFromResultSet(rs, name);
                 } else {
