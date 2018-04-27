@@ -49,7 +49,7 @@ public class BaseEntityUpdater extends BaseConnectionKeeper {
     }
 
     private <T> Object getValueOfId(T object) {
-        for (Field field : ReflectionUtils.getAllClassFields(new ArrayList<>(), object.getClass())) {
+        for (Field field : ReflectionUtils.getAllClassFields(object.getClass())) {
             if (field.getAnnotation(Id.class) != null) {
                 try {
                     field.setAccessible(true);
@@ -64,7 +64,7 @@ public class BaseEntityUpdater extends BaseConnectionKeeper {
 
     private <T> String getEntityFields(Class<T> tClass, T object, boolean getId) {
         StringBuilder fieldNameAndValue = new StringBuilder();
-        for (Field field : ReflectionUtils.getAllClassFields(new ArrayList<>(), tClass)) {
+        for (Field field : ReflectionUtils.getAllClassFields(tClass)) {
             if ((field.getModifiers() & java.lang.reflect.Modifier.FINAL) == java.lang.reflect.Modifier.FINAL) {
                 continue;
             }

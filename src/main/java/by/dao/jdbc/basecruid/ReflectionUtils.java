@@ -51,10 +51,14 @@ public class ReflectionUtils {
                 clazz.equals(String.class);
     }
 
-    static List<Field> getAllClassFields(List<Field> fields, Class<?> type) {
-        fields.addAll(Arrays.asList(type.getDeclaredFields()));
-        if (type.getSuperclass() != null) {
-            getAllClassFields(fields, type.getSuperclass());
+    static List<Field> getAllClassFields(Class<?> clazz) {
+        return recursGetFields(new ArrayList<>(), clazz);
+    }
+
+    private static List<Field> recursGetFields(List<Field> fields, Class<?> clazz) {
+        fields.addAll(Arrays.asList(clazz.getDeclaredFields()));
+        if (clazz.getSuperclass() != null) {
+            recursGetFields(fields, clazz.getSuperclass());
         }
         return fields;
     }
@@ -82,12 +86,16 @@ public class ReflectionUtils {
         return (type instanceof Class ? (Class<?>) type : (Class<?>) ((ParameterizedType) type).getRawType());
     }
 
-    static  <T> Object getIdValueFromObject(Class<T> tClass, T object) throws IllegalAccessException {
-        List<Field> fields = ReflectionUtils.getAllClassFields(new ArrayList<>(), tClass);
+    static  <T> Object getIdValueFromObject(Class<T> tClass, T object) {
+        List<Field> fields = ReflectionUtils.getAllClassFields(tClass);
         for (Field field : fields) {
             if (field.getAnnotation(Id.class) != null) {
                 field.setAccessible(true);
-                return field.get(object);
+                try {
+                    return field.get(object);
+                } catch (IllegalAccessException e) {
+                    throw new RuntimeException("Error getting Value from object: "+e);
+                }
             }
         }
         return null;
