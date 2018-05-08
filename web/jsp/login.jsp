@@ -6,7 +6,12 @@
   To change this template use File | Settings | File Templates.
 --%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<html><head><title>Login</title></head>
+<link href="css/global.css" rel="stylesheet" type="text/css">
+<link href="css/item.css" rel="stylesheet" type="text/css">
+<html>
+<head>
+    <title>Login</title>
+</head>
 <body>
 <form name="loginForm" method="POST" action="loginForm">
     <input type="hidden" name="command" value="login" />

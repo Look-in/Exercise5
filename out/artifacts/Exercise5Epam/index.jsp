@@ -16,7 +16,7 @@
   </head>
   <body>
   <div>
-  <c:url var="selectitem" value="selectitemservlet">
+  <c:url var="selectitem" value="view-race">
     <c:param name="action" value="list"/>
     <c:param name="itemType" value="ALL"/>
   </c:url>

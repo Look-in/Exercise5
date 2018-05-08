@@ -10,7 +10,7 @@
         <module name="Exercise5Epam" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
+    <bytecodeTargetLevel target="1.8">
       <module name="Exercise5Epam" target="1.8" />
     </bytecodeTargetLevel>
   </component>

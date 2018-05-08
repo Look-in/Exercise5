@@ -16,7 +16,7 @@ import java.util.List;
 
 /**
  * Invoking methods of classes that extends Item with attributes
- * from servlet.request.getParameters
+ * from controller.request.getParameters
  * Can use Commons BeanUtils instead this.
  *
  * @author Serg Shankunas

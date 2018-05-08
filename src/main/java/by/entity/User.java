@@ -25,5 +25,4 @@ public class User extends DefaultEntity {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "rate_id"))
     private List<Rate> rates;
-
 }

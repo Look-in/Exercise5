@@ -1,14 +1,14 @@
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%--
   Created by IntelliJ IDEA.
   User: shankunassv
   Date: 27.02.2018
   Time: 17:42
 --%>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <header>
     <h1>${param.action} ${param.type}</h1>
-    <c:if test="${param.user != null}">
+    <c:if test="${user != null}">
         <div>
             <c:url var="logoutUrl" value="/logout"/>
             <form action="${logoutUrl}" id="logout" method="post">
@@ -18,10 +18,10 @@
             </form>
         </div>
         <div>
-            <a class="user-form" href="${shoppingcart}"> Shopping cart ${countBasketItem}</a>
+            <a class="user-form" href="${shoppingcart}"> Cart ${countBasketItem}</a>
         </div>
     </c:if>
-    <c:if test="${param.user == null}">
+    <c:if test="${user == null}">
         <c:url var="url" value="loginForm"></c:url>
         <div>
             <a class="user-form" href="${url}" title="">Login</a>
@@ -31,6 +31,6 @@
         </div>
     </c:if>
     <div>
-        <a class="user-form" href="${ordercart}">Account</a>
+        <a class="user-form" href="${ordercart}">${user.userName}</a>
     </div>
 </header>
