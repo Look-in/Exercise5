@@ -22,31 +22,37 @@ public class LoginFilter implements Filter {
         pages.put("/view.*", new String[]{"client", "bookmaker", "administrator"});
     }
 
+    private String[] getURIAccessRoles(String requestURI) {
+        return pages.entrySet().stream().filter(k -> requestURI.matches(k.getKey())).findFirst()
+                .map(Map.Entry::getValue).orElse(null);
+    }
+
+    private User getSessionUser(HttpSession session) {
+        if (session != null && session.getAttribute("user") != null) {
+            return (User) session.getAttribute("user");
+        }
+        return null;
+    }
+
+    private String validateRedirectAccessURI(HttpServletRequest request, HttpSession session) {
+        String[] pageAccessRoles = getURIAccessRoles(request.getRequestURI());
+        if (pageAccessRoles == null) return null;
+        User user = getSessionUser(session);
+        if (user == null) return request.getContextPath() + "/loginForm";
+        if (Arrays.asList(pageAccessRoles).contains(user.getRole().getRole())) {
+            return null;
+        } else {
+            return request.getContextPath() + "/AccessDenied";
+        }
+    }
+
     @Override
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws ServletException, IOException {
         HttpServletRequest request = (HttpServletRequest) req;
         HttpServletResponse response = (HttpServletResponse) res;
         HttpSession session = request.getSession(false);
-        String redirectURI = request.getContextPath() + "/loginForm";
-        String[] pageAccessRoles = null;
-        boolean loggedIn = session != null && session.getAttribute("user") != null;
-        boolean loginRequest = request.getRequestURI().equals(redirectURI);
-        boolean accessURI = false;
-        for (Map.Entry<String, String[]> entry : pages.entrySet()) {
-            if (request.getRequestURI().matches(entry.getKey())) {
-                pageAccessRoles = entry.getValue();
-                break;
-            }
-        }
-        if (pageAccessRoles != null && loggedIn) {
-            User user = (User) session.getAttribute("user");
-            if (Arrays.asList(pageAccessRoles).contains(user.getRole().getRole())) {
-                accessURI = true;
-            } else {
-                redirectURI = request.getContextPath() + "/AccessDenied";
-            }
-        }
-        if (pageAccessRoles == null || accessURI || loginRequest) {
+        String redirectURI = validateRedirectAccessURI(request, session);
+        if (redirectURI == null) {
             chain.doFilter(request, response);
         } else {
             response.sendRedirect(redirectURI);
