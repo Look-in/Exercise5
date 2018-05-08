@@ -28,22 +28,23 @@ public class LoginFilter implements Filter {
     }
 
     private User getSessionUser(HttpSession session) {
-        if (session != null && session.getAttribute("user") != null) {
-            return (User) session.getAttribute("user");
-        }
-        return null;
+        if (session == null) return null;
+        return (User) session.getAttribute("user");
     }
 
     private String validateRedirectAccessURI(HttpServletRequest request, HttpSession session) {
         String[] pageAccessRoles = getURIAccessRoles(request.getRequestURI());
-        if (pageAccessRoles == null) return null;
+        if (pageAccessRoles == null) {
+            return null;
+        }
         User user = getSessionUser(session);
-        if (user == null) return request.getContextPath() + "/loginForm";
+        if (user == null) {
+            return request.getContextPath() + "/loginForm";
+        }
         if (Arrays.asList(pageAccessRoles).contains(user.getRole().getRole())) {
             return null;
-        } else {
-            return request.getContextPath() + "/AccessDenied";
         }
+        return request.getContextPath() + "/AccessDenied";
     }
 
     @Override
