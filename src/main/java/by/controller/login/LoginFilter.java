@@ -1,4 +1,4 @@
-package by.controller;
+package by.controller.login;
 
 import by.entity.User;
 
@@ -19,7 +19,8 @@ public class LoginFilter implements Filter {
 
     @Override
     public void init(FilterConfig filterConfig) {
-        pages.put("/view.*", new String[]{"client", "bookmaker", "administrator"});
+        pages.put("/view1.*", new String[]{"client", "bookmaker", "administrator"});
+        pages.put("/modify.*", new String[]{"bookmaker", "administrator"});
     }
 
     private String[] getURIAccessRoles(String requestURI) {

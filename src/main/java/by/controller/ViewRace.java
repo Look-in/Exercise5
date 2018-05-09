@@ -21,32 +21,11 @@ public class ViewRace extends javax.servlet.http.HttpServlet {
     @Inject
     RaceDao raceDao;
 
-    @Inject
-    UserService userService;
-
     private void doRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         request.setAttribute("sortBy", AttributeToCompare.values());
         /*if (request.getParameter("sortingBy") != null) {
             ItemComparator.compare(item, AttributeToCompare.valueOf(request.getParameter("sortingBy")));
         }*/
-     /*   Long timeJsp = System.currentTimeMillis();
-        User user = null;
-        User user1 = null;
-        User user2 = null;
-        for (int i = 0; i < 1; i++) {
-            user = userService.checkPasswordAndGetUser("user","user");
-            user1 = userService.checkPasswordAndGetUser("user1","user1");
-            user2 = userService.checkPasswordAndGetUser("user2","user2");
-           // user.getRates();
-            //user1.getRates();
-            //user2.getRates();
-        }
-        float delta = (float)(System.currentTimeMillis() - timeJsp)/1000;
-        System.out.println(delta);
-        System.out.println(user.toString());
-        System.out.println(user1.toString());
-        System.out.println(user2.toString());
-        System.out.println(user.getRates());*/
         request.setAttribute("race", raceDao.getRaces());
         request.getRequestDispatcher("jsp/view-race.jsp").forward(request, response);
     }

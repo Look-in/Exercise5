@@ -1,4 +1,4 @@
-package by.controller;
+package by.controller.login;
 
 import by.entity.User;
 import by.service.UserService;
@@ -22,29 +22,27 @@ public class LoginController extends javax.servlet.http.HttpServlet {
     private UserService userService;
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        Map<String, String> messages = new HashMap<>();
         String username = request.getParameter("username");
         String password = request.getParameter("password");
-        Map<String, String> messages = new HashMap<>();
         if (username == null || username.isEmpty()) {
-            messages.put("username", "Please enter username");
+            messages.put("Имя пользователя", "Введите логин");
         }
         if (password == null || password.isEmpty()) {
-            messages.put("password", "Please enter password");
+            messages.put("Пароль", "Введите пароль");
         }
         if (messages.isEmpty()) {
-            User user = userService.checkPasswordAndGetUser(username,password);
+            User user = userService.checkPasswordAndGetUser(username, password);
             if (user != null) {
                 request.getSession().setAttribute("user", user);
-                //request.getRequestDispatcher("selectitemservlet").forward(request, response);
                 response.sendRedirect(request.getContextPath() + "/view-race");
                 return;
-            } else {
-                messages.put("login", "Unknown login, please try again");
             }
+            messages.put("Логин", "Неверные имя пользователя/пароль");
         }
         request.setAttribute("messages", messages);
         request.getRequestDispatcher("jsp/login.jsp").forward(request, response);
-        }
+    }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         request.getRequestDispatcher("jsp/login.jsp").forward(request, response);

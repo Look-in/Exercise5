@@ -11,4 +11,6 @@ public interface RaceService {
     Race getRace(int raceId);
 
     void pushRace(Race race);
+
+    void deleteRace(int raceId);
 }

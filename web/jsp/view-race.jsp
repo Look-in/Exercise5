@@ -62,19 +62,20 @@
             <div class="img-responsive">
                 <img class="item-image" src="css/images/no-img.png">
                 <span class="range-txt position-rage-bottom">
-        <strong><c:out value="${ elem.race }"/></strong>
-  </span>
-                <c:url var="editurl" value="/viewitemmodify">
+    <strong><c:out value="${ elem.race }"/></strong>
+    </span>
+                <c:url var="editurl" value="/modify-race">
                     <c:param name="action" value="EDIT"/>
                     <c:param name="id" value="${elem.id}"/>
                 </c:url>
-                <a class="item edit" ${param.itemType == "ALL" ? 'hidden="true"' : ''} href="${editurl}">Edit</a>
-                <c:url var="deleteurl" value="/viewitemmodify">
-                    <c:param name="action" value="DELETE"/>
-                    <c:param name="id" value="${elem.id}"/>
-                </c:url>
-                <a class="item delete" ${param.itemType == "ALL" ? 'hidden="true"' : ''} href="${deleteurl}"
-                   title="">Delete</a>
+                <a class="item edit" ${user.role.role == 'bookmaker' ? '' : 'hidden="true"' } href="${editurl}">Edit</a>
+                <div class="item delete" ${user.role.role == 'bookmaker' ? '' : 'hidden="true"'}>
+                    <form name="Delete" action="/modify-race" method="POST">
+                        <input type="hidden" name="id" value="${ elem.id }">
+                        <input type="hidden" name="action" value="delete"/>
+                        <input type="submit" name="button" value="DELETE"/>
+                    </form>
+                </div>
             </div>
         </c:forEach>
     </div>

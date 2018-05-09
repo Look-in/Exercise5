@@ -29,4 +29,9 @@ public class RaceServiceImpl implements RaceService {
             raceDao.update(race);
         }
     }
+
+    @Override
+    public void deleteRace(int raceId) {
+        raceDao.delete(raceId);
+    }
 }

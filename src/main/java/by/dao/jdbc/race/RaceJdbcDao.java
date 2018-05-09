@@ -20,7 +20,7 @@ public class RaceJdbcDao extends BaseJdbcDao implements RaceDao {
 
     @Override
     public void create(Race entity) {
-
+        System.out.println("create");
     }
 
     @Override

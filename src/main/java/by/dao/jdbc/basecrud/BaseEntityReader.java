@@ -1,4 +1,4 @@
-package by.dao.jdbc.basecruid;
+package by.dao.jdbc.basecrud;
 
 import by.Utils.annotations.*;
 import javassist.util.proxy.MethodHandler;

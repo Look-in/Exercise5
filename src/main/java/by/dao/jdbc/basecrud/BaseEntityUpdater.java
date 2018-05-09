@@ -1,11 +1,10 @@
-package by.dao.jdbc.basecruid;
+package by.dao.jdbc.basecrud;
 
 import by.Utils.annotations.*;
 import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.Field;
 import java.sql.*;
-import java.util.ArrayList;
 
 @Slf4j
 public class BaseEntityUpdater extends BaseConnectionKeeper {

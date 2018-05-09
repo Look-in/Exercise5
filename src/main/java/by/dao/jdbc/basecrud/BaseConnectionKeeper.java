@@ -1,4 +1,4 @@
-package by.dao.jdbc.basecruid;
+package by.dao.jdbc.basecrud;
 
 import by.jdbc.ConnectionPool;
 import lombok.Getter;
