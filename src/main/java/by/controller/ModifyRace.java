@@ -1,5 +1,6 @@
 package by.controller;
 
+import by.Utils.HttpServletRequestReflectionUtils;
 import by.entity.Race;
 import by.service.RaceService;
 
@@ -22,16 +23,14 @@ public class ModifyRace extends HttpServlet {
     private RaceService raceService;
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        if ("delete".equals(request.getParameter("action"))) {
+        if ("delete".equalsIgnoreCase(request.getParameter("action"))) {
             doDelete(request, response);
             return;
         }
-        Race race = new Race();
-        race.setRace("Test");
+        Race race = HttpServletRequestReflectionUtils.getEntityFromHttpRequest(Race.class, request, null);
         raceService.pushRace(race);
         response.sendRedirect(request.getContextPath() + "/view-race");
     }
-
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         Race race = (request.getParameter("id") != null) ?
@@ -43,8 +42,7 @@ public class ModifyRace extends HttpServlet {
 
     protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         if (request.getParameter("id") != null) {
-            int id = Integer.valueOf(request.getParameter("id"));
-            raceService.deleteRace(id);
+            raceService.deleteRace(Integer.valueOf(request.getParameter("id")));
         }
         response.sendRedirect(request.getContextPath() + "/view-race");
     }

@@ -1,5 +1,6 @@
 package by.dao.jdbc.basecrud;
 
+import by.Utils.ReflectionUtils;
 import by.Utils.annotations.*;
 import lombok.extern.slf4j.Slf4j;
 
@@ -32,7 +33,6 @@ public class BaseEntityUpdater extends BaseConnectionKeeper {
         Table table = tClass.getAnnotation(Table.class);
         String tableName = (table != null ? table.name() : tClass.getSimpleName());
         String sql = String.format("update %s set %s where id=?", tableName, getEntityFields(tClass, entity, false));
-        System.out.println(sql);
         log.debug("Create SQL: {}", sql);
         return sql;
     }
@@ -61,6 +61,7 @@ public class BaseEntityUpdater extends BaseConnectionKeeper {
         return null;
     }
 
+    @SuppressWarnings("unchecked")
     private <T> String getEntityFields(Class<T> tClass, T object, boolean getId) {
         StringBuilder fieldNameAndValue = new StringBuilder();
         for (Field field : ReflectionUtils.getAllClassFields(tClass)) {

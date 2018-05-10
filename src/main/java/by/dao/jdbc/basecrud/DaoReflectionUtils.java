@@ -1,5 +1,6 @@
 package by.dao.jdbc.basecrud;
 
+import by.Utils.ReflectionUtils;
 import by.Utils.annotations.Column;
 import by.Utils.annotations.Id;
 import by.Utils.annotations.JoinColumn;
@@ -10,8 +11,6 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -21,9 +20,9 @@ import java.util.List;
  *
  * @author Serg Shankunas
  */
-public class ReflectionUtils {
+public class DaoReflectionUtils {
 
-    private ReflectionUtils() {
+    private DaoReflectionUtils() {
     }
 
     static String getFieldAnnotatedName(Field field) {
@@ -37,38 +36,6 @@ public class ReflectionUtils {
             }
         }
         return field.getName();
-    }
-
-    static boolean isPrimitiveOrWrapperType(Class<?> clazz) {
-        return clazz.isPrimitive() || clazz.equals(Boolean.class) ||
-                clazz.equals(Integer.class) ||
-                clazz.equals(Character.class) ||
-                clazz.equals(Byte.class) ||
-                clazz.equals(Short.class) ||
-                clazz.equals(Double.class) ||
-                clazz.equals(Long.class) ||
-                clazz.equals(Float.class) ||
-                clazz.equals(String.class);
-    }
-
-    static List<Field> getAllClassFields(Class<?> clazz) {
-        return recursGetFields(new ArrayList<>(), clazz);
-    }
-
-    private static List<Field> recursGetFields(List<Field> fields, Class<?> clazz) {
-        fields.addAll(Arrays.asList(clazz.getDeclaredFields()));
-        if (clazz.getSuperclass() != null) {
-            recursGetFields(fields, clazz.getSuperclass());
-        }
-        return fields;
-    }
-
-    static <T> T getEntity(Class<T> tClass) {
-        try {
-            return tClass.newInstance();
-        } catch (IllegalAccessException | InstantiationException e) {
-            return null;
-        }
     }
 
     @SuppressWarnings("unchecked")

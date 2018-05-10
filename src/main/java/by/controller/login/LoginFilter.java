@@ -55,6 +55,9 @@ public class LoginFilter implements Filter {
         HttpSession session = request.getSession(false);
         String redirectURI = validateRedirectAccessURI(request, session);
         if (redirectURI == null) {
+            request.setCharacterEncoding("UTF-8");
+            response.setContentType("text/html; charset=UTF-8");
+            response.setCharacterEncoding("UTF-8");
             chain.doFilter(request, response);
         } else {
             response.sendRedirect(redirectURI);

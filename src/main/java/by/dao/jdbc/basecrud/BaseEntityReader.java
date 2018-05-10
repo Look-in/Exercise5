@@ -1,5 +1,6 @@
 package by.dao.jdbc.basecrud;
 
+import by.Utils.ReflectionUtils;
 import by.Utils.annotations.*;
 import javassist.util.proxy.MethodHandler;
 import javassist.util.proxy.ProxyFactory;
@@ -190,7 +191,7 @@ public class BaseEntityReader extends BaseEntityUpdater {
                     field.getAnnotation(OneToMany.class).fetch() == OneToMany.FetchType.LAZY) {
                 continue;
             }
-            String fieldAnnotatedName = ReflectionUtils.getFieldAnnotatedName(field);
+            String fieldAnnotatedName = DaoReflectionUtils.getFieldAnnotatedName(field);
             if (field.getAnnotation(Id.class) != null) {
                 idFieldName = fieldAnnotatedName;
             }
@@ -253,8 +254,8 @@ public class BaseEntityReader extends BaseEntityUpdater {
         JoinTable joinTable = field.getAnnotation(JoinTable.class);
         String sql = sqlGenerationOneToMany(joinTable.name(),
                 joinTable.joinColumns().name(), joinTable.inverseJoinColumns().name());
-        fieldObject = findInversedColumnElements(ReflectionUtils.getGenericParameterField(field),
-                sql, ReflectionUtils.getIdValueFromObject(tClass, object));
+        fieldObject = findInversedColumnElements(DaoReflectionUtils.getGenericParameterField(field),
+                sql, DaoReflectionUtils.getIdValueFromObject(tClass, object));
         field.setAccessible(true);
         try {
             field.set(object, fieldObject);
@@ -295,13 +296,13 @@ public class BaseEntityReader extends BaseEntityUpdater {
             }
             Object fieldObject = null;
             try {
-                String name = ReflectionUtils.getFieldAnnotatedName(field);
+                String name = DaoReflectionUtils.getFieldAnnotatedName(field);
                 if (ReflectionUtils.isPrimitiveOrWrapperType(field.getType())) {
-                    fieldObject = ReflectionUtils.getValueFromResultSet(rs, name);
+                    fieldObject = DaoReflectionUtils.getValueFromResultSet(rs, name);
                 } else {
                     if (field.getAnnotation(ManyToOne.class) != null) {
                         fieldObject = findByConnection(sqlGeneration(field.getType(), true), field.getType(),
-                                ReflectionUtils.getValueFromResultSet(rs, name), connection);
+                                DaoReflectionUtils.getValueFromResultSet(rs, name), connection);
                     }
                 }
                 field.setAccessible(true);
