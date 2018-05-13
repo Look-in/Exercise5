@@ -29,7 +29,7 @@ public class RaceServiceTest {
     	System.out.println("Тест");
      //   System.out.println(userService.getRoles());
      //   System.out.println(raceService.getRaces().toString());
-         Long timeJsp = System.currentTimeMillis();
+/*         Long timeJsp = System.currentTimeMillis();
         User user = null;
         User user1 = null;
         User user2 = null;
@@ -45,26 +45,27 @@ public class RaceServiceTest {
         if (user1 !=null)
         System.out.println(user1.toString());
         if (user2 !=null)
-        System.out.println(user2.toString());
+        System.out.println(user2.toString());*/
          //System.out.println(user.toString());
        
- /*       System.out.println(rateService.getRates().toString());
+//       System.out.println(rateService.getRates().toString());
         Race race = new Race();
         race.setId(1);
-        race.setRace("Забег тестовый");
-        raceService.pushRace(race);*/
+        race.setRace("Забег тестов");
+      //  raceService.pushRace(race);
 
 
-     /*   Rate rate = new Rate();
+        Rate rate = new Rate();
         RateResult rateResult = new RateResult();
         rateResult.setRateResult("Будет играть");
         rateResult.setId(2);
-        rate.setId(1);
-        rate.setRate("Новая ставка 2 к 1");
+        //rate.setId(1);
+        rate.setRate("Тестовая ставка 2 к 1");
         rate.setRateResult(rateResult);
         rate.setRace(race);
         //rate.setFoo(20);
-        rateService.pushRate(rate);*/
+        rateService.pushRate(rate);
+        System.out.println(rate.getId());
     }
 
     private void shutdown() {

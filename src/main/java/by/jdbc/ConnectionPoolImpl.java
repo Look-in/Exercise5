@@ -1,6 +1,8 @@
 package by.jdbc;
 
 import javax.enterprise.context.ApplicationScoped;
+import java.io.IOException;
+import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -11,22 +13,26 @@ import java.util.concurrent.LinkedBlockingQueue;
 @ApplicationScoped
 public class ConnectionPoolImpl implements ConnectionPool {
 
-    private final String URL = "jdbc:mysql://localhost:3306/race";
-
     private static Properties jdbcProp;
-
-    private int countConnections;
 
     private Queue<Connection> connections = new LinkedBlockingQueue<>();
 
     private ConnectionPoolImpl() {
-        countConnections = Integer.valueOf(getProperties().getProperty("countConnectionsPool"));
-        for (int i = 0; i < countConnections ; i++) {
+        String driver = getProperties().getProperty("db.driver");
+        String url = getProperties().getProperty("db.url");
+        int countConnections = Integer.valueOf(getProperties().getProperty("db.poolsize"));
+        try {
+            if (driver != null) {
+                Class.forName(driver);
+            }
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(String.format("Can't register db.driver %s: ", driver) + e);
+        }
+        for (int i = 0; i < countConnections; i++) {
             try {
-                DriverManager.registerDriver(new com.mysql.jdbc.Driver());
-                connections.add(new PooledConnection(DriverManager.getConnection(URL, getProperties()),this));
+                connections.add(new PooledConnection(DriverManager.getConnection(url, getProperties()), this));
             } catch (SQLException e) {
-                throw new RuntimeException(String.format("Can't get connection from %s. Error: ", URL)+e);
+                throw new RuntimeException(String.format("Can't get connection from %s. Error: ", url) + e);
             }
         }
     }
@@ -34,12 +40,12 @@ public class ConnectionPoolImpl implements ConnectionPool {
     private Properties getProperties() {
         if (jdbcProp == null) {
             jdbcProp = new Properties();
-            jdbcProp.put("user", "root");
-            jdbcProp.put("password", "sql");
-            jdbcProp.put("autoReconnect", "true");
-            jdbcProp.put("characterEncoding", "UTF-8");
-            jdbcProp.put("useUnicode", "true");
-            jdbcProp.put("countConnectionsPool", "20");
+            String filename = "database.properties";
+            try (InputStream in = getClass().getClassLoader().getResourceAsStream(filename)) {
+                jdbcProp.load(in);
+            } catch (IOException e) {
+                throw new RuntimeException("Can't read database.properties: " + e);
+            }
         }
         return jdbcProp;
     }

@@ -9,7 +9,7 @@ import java.util.List;
 public class RaceServiceImpl implements RaceService {
 
     @Inject
-    RaceDao raceDao;
+    private RaceDao raceDao;
 
     @Override
     public List<Race> getRaces() {

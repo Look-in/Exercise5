@@ -8,7 +8,7 @@ import lombok.Setter;
 
 import java.io.Serializable;
 
-public class DefaultEntity implements Serializable{
+class DefaultEntity implements Serializable{
 
     @Getter
     @Setter

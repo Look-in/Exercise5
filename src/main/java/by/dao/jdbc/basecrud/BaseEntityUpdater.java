@@ -16,7 +16,7 @@ public class BaseEntityUpdater extends BaseConnectionKeeper {
         return statement;
     }
 
-    protected <T> void merge(String sql, Class<T> tClass, T entity) {
+    private  <T> void merge(String sql, Class<T> tClass, T entity) {
         if (tClass.getAnnotation(Entity.class) == null) return;
         try (Connection connection = getConnectionPool().getConnection()) {
             updateByConnection(sql, entity, connection);

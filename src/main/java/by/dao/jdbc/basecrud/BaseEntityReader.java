@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
  * @author Serg Shankunas <shserg2012@gmail.com>
  */
 @Slf4j
-public class BaseEntityReader extends BaseEntityUpdater {
+public class BaseEntityReader extends BaseEntityCreator {
 
     /**
      * Карты для хранения сгенерированных SQL запросов
@@ -81,7 +81,7 @@ public class BaseEntityReader extends BaseEntityUpdater {
      * Метод для выборки из БД элементов, связанных с таблицей сущности по принципу OneToMany
      * @param sql - SQL запрос
      * @param id - Id сущности
-     * @param <T>
+     * @param <T> tClass
      * @return список элементов класса-аргумента
      */
     private <T> List<T> findInversedColumnElements(Class<T> tClass, String sql, Object id) {
@@ -121,7 +121,7 @@ public class BaseEntityReader extends BaseEntityUpdater {
      * @return элемент класса-аргумента
      */
     protected <T> T find(String sql, Class<T> tClass, Object id) {
-        if (tClass.getAnnotation(Entity.class) == null) return null;
+       // if (tClass.getAnnotation(Entity.class) == null) return null;
         T object;
         try (Connection connection = getConnectionPool().getConnection()) {
             object = findByConnection(sql, tClass, id, connection);
@@ -228,12 +228,17 @@ public class BaseEntityReader extends BaseEntityUpdater {
      * @param <T>
      * @return элемент класса T из БД
      */
+    @SuppressWarnings("unchecked")
     private <T> T findByConnection(String sql, Class<T> tClass, Object id, Connection connection) {
         T object = null;
         try (PreparedStatement statement = selectPreparedStatement(sql, connection, id);
              ResultSet rs = statement.executeQuery()) {
             while (rs.next()) {
-                object = getEntityResultSet(rs, tClass, connection);
+                if (ReflectionUtils.isPrimitiveOrWrapperType(tClass)) {
+                 object = (T) rs.getObject(1);
+                } else {
+                    object = getEntityResultSet(rs, tClass, connection);
+                }
             }
         } catch (Exception exc) {
             String error = String.format("Error reading %s from DB by id = %s. Error: %s", tClass.getSimpleName(), id, exc);

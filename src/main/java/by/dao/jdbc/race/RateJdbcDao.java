@@ -4,6 +4,7 @@ import by.dao.RateDao;
 import by.dao.jdbc.BaseJdbcDao;
 import by.entity.Race;
 import by.entity.Rate;
+import by.entity.RateResult;
 
 import java.util.List;
 
@@ -20,8 +21,13 @@ public class RateJdbcDao extends BaseJdbcDao implements RateDao {
     }
 
     @Override
-    public void create(Rate entity) {
+    public int getRateResultOfRate(int rateId) {
+        return find("select result_id from rate where id = ?;", Integer.class, rateId);
+    }
 
+    @Override
+    public void create(Rate entity) {
+        persist(Rate.class, entity);
     }
 
     @Override

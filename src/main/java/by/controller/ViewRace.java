@@ -1,15 +1,14 @@
 package by.controller;
 
 import by.dao.RaceDao;
-import by.entity.User;
-import by.entity.event.AttributeToCompare;
-import by.service.UserService;
+import org.jboss.weld.bean.SessionBean;
 
 import javax.inject.Inject;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
 @WebServlet(
@@ -19,14 +18,11 @@ import java.io.IOException;
 public class ViewRace extends javax.servlet.http.HttpServlet {
 
     @Inject
-    RaceDao raceDao;
+    private RaceDao raceDao;
 
     private void doRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        request.setAttribute("sortBy", AttributeToCompare.values());
-        /*if (request.getParameter("sortingBy") != null) {
-            ItemComparator.compare(item, AttributeToCompare.valueOf(request.getParameter("sortingBy")));
-        }*/
         request.setAttribute("race", raceDao.getRaces());
+        request.setAttribute("type", "Скачки");
         request.getRequestDispatcher("jsp/view-race.jsp").forward(request, response);
     }
 

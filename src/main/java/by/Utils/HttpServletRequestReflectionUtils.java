@@ -25,7 +25,8 @@ public class HttpServletRequestReflectionUtils {
 
     @SuppressWarnings("unchecked")
     private static <T> T getValueFromHttpServletRequest(String value, Class<T> clazz) {
-           if (clazz.isAssignableFrom(Integer.class)) {
+        if (value == null || "".equals(value)) return null;
+        if (clazz.isAssignableFrom(Integer.class)) {
                return (T) Integer.valueOf(value);
            }
             if (clazz.isAssignableFrom(Boolean.class)) {

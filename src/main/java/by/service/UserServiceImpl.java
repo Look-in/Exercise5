@@ -11,10 +11,10 @@ import java.util.List;
 public class UserServiceImpl implements UserService {
 
     @Inject
-    UserRoleDao userRoleDao;
+    private UserRoleDao userRoleDao;
 
     @Inject
-    UserDao userDao;
+    private UserDao userDao;
 
     @Override
     public List<Role> getRoles() {
