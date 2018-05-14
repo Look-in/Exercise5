@@ -5,6 +5,7 @@ import by.entity.Race;
 import by.entity.Rate;
 import by.service.RaceService;
 import by.service.RateService;
+import by.service.reference.ReferenceService;
 
 import javax.inject.Inject;
 import javax.servlet.ServletException;
@@ -28,6 +29,9 @@ public class ModifyRace extends HttpServlet {
 
     @Inject
     private RateService rateService;
+
+    @Inject
+    private ReferenceService referenceService;
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         if ("delete".equalsIgnoreCase(request.getParameter("action"))) {
@@ -53,6 +57,7 @@ public class ModifyRace extends HttpServlet {
         List<Rate> rates = (race.getId() != null) ? rateService.getRatesForRace(race.getId()) : Collections.EMPTY_LIST;
         request.setAttribute("race", race);
         request.setAttribute("rates", rates);
+        request.setAttribute("rateResults", referenceService.getRateResults());
         request.getRequestDispatcher("jsp/modify-race.jsp").forward(request, response);
     }
 

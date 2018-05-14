@@ -56,7 +56,7 @@ ${message}<br>
             <c:url var="editurl" value="/modify-race">
                 <c:param name="id" value="${elem.id}"/>
             </c:url>
-            <a class="item edit" ${user.role.role == 'bookmaker' ? '' : 'hidden="true"' } href="${editurl}"><fmt:message
+            <a class="item edit" ${user.role.role == 'client' or user == null ? 'hidden="true"' : '' } href="${editurl}"><fmt:message
                     key="button.edit"/></a>
             <div class="item delete" ${user.role.role == 'bookmaker' ? '' : 'hidden="true"'}>
                 <form name="Delete" action="<c:url value="/modify-race"/>" method="POST">

@@ -28,11 +28,12 @@ ${message}<br>
             <td><label for="race">${title}:</label></td>
             <td>
                 <input type="text" id="race" name="race"
-                       size="30" value="${ race.race }">
+                       size="30"
+                       value="${ race.race }"  ${user.role.role == 'administrator' ? 'readonly="readonly"' : '' }>
             </td>
         </tr>
     </table>
-    <input type="submit" name="button" value=<fmt:message key="button.save"/>>
+    <input ${user.role.role == 'administrator' ? 'type="hidden"' : 'type="submit"' } type="submit" name="button" value=<fmt:message key="button.save"/>>
     <a href="<c:url value="/view-race"/>" title=""><fmt:message key="button.cancel"/></a>
 </form>
 <br>
@@ -40,7 +41,7 @@ ${message}<br>
 <br>
 <fmt:message var="rateTitle" key="rate.title"/>
 <div><strong>${rateTitle}</strong></div>
-<div class="add-item">
+<div class="add-item" ${user.role.role == 'bookmaker' and race.id != null ? '' : 'hidden="true"'}>
     <c:url var="addurl" value="/modify-rate">
         <c:param name="raceId" value="${race.id}"/>
     </c:url>
@@ -57,14 +58,30 @@ ${message}<br>
             <c:url var="editurl" value="/modify-rate">
                 <c:param name="id" value="${elem.id}"/>
             </c:url>
-            <a class="item edit" ${elem.rateResult.id == 1 ? '' : 'hidden="true"' } href="${editurl}"><fmt:message
+            <a class="item edit" ${elem.rateResult.id == 1 and user.role.role == 'bookmaker' ? '' : 'hidden="true"' } href="${editurl}"><fmt:message
                     key="button.edit"/></a>
-            <div class="item delete" ${elem.rateResult.id == 1 ? '' : 'hidden="true"' } >
-                <form name="Delete" action="<c:url value="/modify-rate"/>" method="POST">
-                    <input type="hidden" name="id" value="${ elem.id }">
-                    <input type="hidden" name="action" value="delete">
-                    <input type="submit" name="button" value=<fmt:message key="button.delete"/>>
-                </form>
+            <div class="item delete" ${user.role.role == 'administrator' or elem.rateResult.id == 1 ? '' : 'hidden="true"' } >
+                <c:choose>
+                    <c:when test="${user.role.role == 'administrator'}">
+                    <form action="change-rateResult" method="POST">
+                        <input type="hidden" name="rateId" value="${  elem.id }">
+                        <input type="hidden" name="raceId" value="${  race.id }">
+                        <select name="rateResult" onchange="this.form.submit()">
+                        <c:forEach var="result" items = "${rateResults}">
+                                <option ${result.id == elem.rateResult.id ? 'selected="true"' : ''}
+                                        value="${result.id}">${result.rateResult}</option>
+                            </c:forEach>
+                        </select>
+                    </form>
+                    </c:when>
+                    <c:when test="${user.role.role == 'bookmaker'}">
+                        <form name="Delete" action="<c:url value="/modify-rate"/>" method="POST">
+                            <input type="hidden" name="id" value="${ elem.id }">
+                            <input type="hidden" name="action" value="delete">
+                            <input type="submit" name="button" value=<fmt:message key="button.delete"/>>
+                        </form>
+                    </c:when>
+                </c:choose>
             </div>
         </div>
     </c:forEach>
