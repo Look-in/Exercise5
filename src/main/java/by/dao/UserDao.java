@@ -2,9 +2,7 @@ package by.dao;
 
 import by.entity.User;
 
-public interface UserDao {
+public interface UserDao extends ChangeInstance<User> {
 
     User getUser(String userName);
-
-    User getUserRates(User user);
 }

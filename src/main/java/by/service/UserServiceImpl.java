@@ -17,13 +17,14 @@ public class UserServiceImpl implements UserService {
     private UserDao userDao;
 
     @Override
-    public List<Role> getRoles() {
-        return userRoleDao.getRoles();
-    }
-
-    @Override
     public Role getRole(int roleId) {
         return userRoleDao.getRole(roleId);
+    }
+
+
+    @Override
+    public List<Role> getRoles() {
+        return userRoleDao.getRoles();
     }
 
     @Override
@@ -36,7 +37,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User getUserRates(User user) {
-        return userDao.getUserRates(user);
+    public User getUser(String userName) {
+        return userDao.getUser(userName);
     }
 }

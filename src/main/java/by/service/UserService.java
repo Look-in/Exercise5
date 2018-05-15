@@ -7,11 +7,11 @@ import java.util.List;
 
 public interface UserService {
 
-    List<Role> getRoles();
+    User checkPasswordAndGetUser(String userName, String password);
+
+    User getUser(String userName);
 
     Role getRole(int roleId);
 
-    User checkPasswordAndGetUser(String userName, String password);
-
-    User getUserRates(User user);
+    List<Role> getRoles();
 }

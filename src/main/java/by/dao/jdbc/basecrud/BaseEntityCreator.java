@@ -19,7 +19,7 @@ public class BaseEntityCreator extends BaseEntityUpdater {
         return connection.prepareStatement(sql);
     }
 
-    private  <T> void persist(String sql, Class<T> tClass, T entity) {
+    protected   <T> void insert(String sql, Class<T> tClass, T entity) {
         if (tClass.getAnnotation(Entity.class) == null) return;
         try (Connection connection = getConnectionPool().getConnection()) {
             createByConnection(sql, entity, connection);
@@ -31,7 +31,7 @@ public class BaseEntityCreator extends BaseEntityUpdater {
     }
 
     protected <T> void persist(Class<T> tClass, T entity) {
-        persist(sqlGeneration(tClass, entity), tClass, entity);
+        insert(sqlGeneration(tClass, entity), tClass, entity);
     }
 
     private <T> String sqlGeneration(Class<T> tClass, T entity) {

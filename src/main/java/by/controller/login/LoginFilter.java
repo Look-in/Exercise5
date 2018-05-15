@@ -19,7 +19,7 @@ public class LoginFilter implements Filter {
 
     @Override
     public void init(FilterConfig filterConfig) {
-       // pages.put("/view1.*", new String[]{"client", "bookmaker", "administrator"});
+        pages.put("/place.*", new String[]{"client"});
         pages.put("/modify.*", new String[]{"bookmaker", "administrator"});
         pages.put("/change-rateResult.*", new String[]{"administrator"});
     }

@@ -9,9 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
@@ -84,8 +82,8 @@ public class BaseEntityReader extends BaseEntityCreator {
      * @param <T> tClass
      * @return список элементов класса-аргумента
      */
-    private <T> List<T> findInversedColumnElements(Class<T> tClass, String sql, Object id) {
-        List<T> elements = new ArrayList<>();
+    private <T> Set<T> findInversedColumnElements(Class<T> tClass, String sql, Object id) {
+        Set<T> elements = new HashSet<>();
         try (Connection connection = getConnectionPool().getConnection();
              PreparedStatement statement = selectPreparedStatement(sql, connection, id);
              ResultSet rs = statement.executeQuery()) {

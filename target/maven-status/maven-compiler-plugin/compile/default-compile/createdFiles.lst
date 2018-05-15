@@ -3,6 +3,7 @@ by\Utils\annotations\Entity.class
 by\entity\Race.class
 by\entity\DefaultEntity.class
 by\dao\jdbc\basecrud\BaseEntityReader.class
+by\service\reference\AttributeToCompare.class
 by\dao\jdbc\basecrud\DaoReflectionUtils.class
 by\dao\jdbc\BaseJdbcDao.class
 by\service\UserServiceImpl.class
@@ -18,6 +19,7 @@ by\entity\User.class
 by\entity\RateResult.class
 by\service\RaceServiceImpl.class
 by\jdbc\PooledConnection.class
+by\Utils\RaceSortUtil$1.class
 by\controller\ModifyRace.class
 by\dao\jdbc\race\RaceJdbcDao.class
 by\service\RaceService.class
@@ -31,6 +33,7 @@ by\service\RateService.class
 by\controller\ModifyRate.class
 by\entity\Role.class
 by\controller\login\LoginFilter.class
+by\service\reference\ReferenceService.class
 by\Utils\annotations\OneToMany.class
 by\Utils\SetException.class
 by\Utils\annotations\GeneratedValue.class
@@ -41,7 +44,9 @@ by\Utils\annotations\GeneratedValue$GenerationType.class
 by\controller\ViewRace.class
 by\Utils\annotations\JoinTable.class
 by\jdbc\ConnectionPoolImpl.class
+by\Utils\RaceSortUtil.class
 by\Utils\annotations\Id.class
+by\controller\PlaceRate.class
 by\controller\login\LogoutController.class
 by\Utils\ReflectionUtils.class
 by\Utils\annotations\Table.class
@@ -49,7 +54,9 @@ by\dao\jdbc\basecrud\BaseEntityCreator.class
 by\dao\ChangeInstance.class
 by\dao\jdbc\basecrud\BaseEntityUpdater.class
 by\dao\jdbc\user\UserJdbcDao.class
+by\controller\ChangeRateResult.class
 by\dao\UserDao.class
 by\jdbc\CashStatement.class
+by\service\reference\ReferenceServiceImpl.class
 by\Utils\annotations\ManyToOne.class
 by\controller\filter\MessageFilter.class

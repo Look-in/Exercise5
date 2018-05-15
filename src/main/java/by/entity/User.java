@@ -5,11 +5,12 @@ import by.Utils.annotations.OneToMany.FetchType;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import java.util.List;
+import java.util.Set;
 
 @Data
 @Entity
 @EqualsAndHashCode(callSuper=true)
+@Table(name = "users")
 public class User extends DefaultEntity {
 
     private String userName;
@@ -24,5 +25,5 @@ public class User extends DefaultEntity {
     @JoinTable(name = "user_rates",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "rate_id"))
-    private List<Rate> rates;
+    private Set<Rate> rates;
 }

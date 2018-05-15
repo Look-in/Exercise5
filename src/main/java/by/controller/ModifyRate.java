@@ -45,7 +45,7 @@ public class ModifyRate extends HttpServlet {
                 rateService.getRate(Integer.valueOf(request.getParameter("id"))) :
                 rateService.getNewRate(raceId);
         request.setAttribute("rate", rate);
-        request.getRequestDispatcher("jsp/modify-rate.jsp").forward(request, response);
+        request.getRequestDispatcher("WEB-INF/jsp/modify-rate.jsp").forward(request, response);
     }
 
     protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws IOException {

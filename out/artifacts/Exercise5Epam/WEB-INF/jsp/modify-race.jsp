@@ -29,11 +29,11 @@ ${message}<br>
             <td>
                 <input type="text" id="race" name="race"
                        size="30"
-                       value="${ race.race }"  ${user.role.role == 'administrator' ? 'readonly="readonly"' : '' }>
+                       value="${ race.race }"  ${user.role.role != 'bookmaker' ? 'readonly="readonly"' : '' }>
             </td>
         </tr>
     </table>
-    <input ${user.role.role == 'administrator' ? 'type="hidden"' : 'type="submit"' } type="submit" name="button" value=<fmt:message key="button.save"/>>
+    <input ${user.role.role != 'bookmaker' ? 'type="hidden"' : 'type="submit"' } type="submit" name="button" value=<fmt:message key="button.save"/>>
     <a href="<c:url value="/view-race"/>" title=""><fmt:message key="button.cancel"/></a>
 </form>
 <br>
@@ -81,6 +81,12 @@ ${message}<br>
                             <input type="submit" name="button" value=<fmt:message key="button.delete"/>>
                         </form>
                     </c:when>
+                    <c:otherwise>
+                        <form name="PlaceRate" action="<c:url value="/place-rate"/>" method="POST">
+                            <input type="hidden" name="id" value="${ elem.id }">
+                            <input type="submit" name="button" value=<fmt:message key="button.place-rate"/>>
+                        </form>
+                    </c:otherwise>
                 </c:choose>
             </div>
         </div>

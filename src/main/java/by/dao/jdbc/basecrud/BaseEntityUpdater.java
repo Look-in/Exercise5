@@ -70,12 +70,14 @@ public class BaseEntityUpdater extends BaseConnectionKeeper {
             }
             Column column = field.getAnnotation(Column.class);
             JoinColumn joinColumn = field.getAnnotation(JoinColumn.class);
+            JoinTable joinTable = field.getAnnotation(JoinTable.class);
             try {
                 field.setAccessible(true);
                 Object value = field.get(object);
                 if (value == null) continue;
                 if (!getId) {
                     if (field.getAnnotation(Id.class) == null) {
+                        if (joinTable != null) continue;
                         if (fieldNameAndValue.length() != 0) {
                             fieldNameAndValue.append(", ");
                         }

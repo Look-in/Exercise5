@@ -13,7 +13,18 @@ public class UserJdbcDao extends BaseJdbcDao implements UserDao {
     }
 
     @Override
-    public User getUserRates(User user) {
-     return null;
+    public void create(User entity) {
+
+    }
+
+    @Override
+    public void update(User entity) {
+        merge(User.class, entity);
+        System.out.println(entity.toString());
+    }
+
+    @Override
+    public void delete(Integer id) {
+
     }
 }

@@ -1,11 +1,11 @@
 package by.controller;
 
-import by.Utils.HttpServletRequestReflectionUtils;
 import by.entity.Race;
 import by.entity.Rate;
+import by.entity.User;
 import by.service.RaceService;
 import by.service.RateService;
-import by.service.reference.ReferenceService;
+import by.service.UserRateService;
 
 import javax.inject.Inject;
 import javax.servlet.ServletException;
@@ -18,11 +18,11 @@ import java.util.Collections;
 import java.util.List;
 
 @WebServlet(
-        name = "modify race servlet",
-        description = "Сервлет для отображения страницы модификации race",
-        urlPatterns = "/modify-race")
+        name = "Place rate servlet",
+        description = "Сервлет для добавления ставки в польз корзину",
+        urlPatterns = "/place-rate")
 
-public class ModifyRace extends HttpServlet {
+public class PlaceRate extends HttpServlet {
 
     @Inject
     private RaceService raceService;
@@ -31,23 +31,26 @@ public class ModifyRace extends HttpServlet {
     private RateService rateService;
 
     @Inject
-    private ReferenceService referenceService;
+    private UserRateService userRateService;
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         if ("delete".equalsIgnoreCase(request.getParameter("action"))) {
             doDelete(request, response);
             return;
         }
-        Race race = HttpServletRequestReflectionUtils.getEntityFromHttpRequest(Race.class, request, null);
-        String message;
-        if (race.getId() == null || rateService.isAllNewRates(race.getId())) {
-            raceService.pushRace(race);
-            message = String.format("Ставка %s сохранена", race.getId());
-        } else {
-            message = String.format("Невозможно сохранить ставку %s. В забеге есть сыгранные ставки", race.getId());
+        User user = (User) request.getSession().getAttribute("user");
+        Rate rate = (request.getParameter("id") != null) ? rateService.getRate(Integer.valueOf(request.getParameter("id"))) : null;
+        if (rate != null) {
+            String message;
+            if (rate.getRateResult().getId() == 1 && user.getRates().stream().noneMatch(e -> e.getId().equals(rate.getId()))) {
+                userRateService.placeUserRate(user, rate);
+                message = String.format("Ставка %s сделана", rate.getId());
+            } else {
+                message = "Повторное добавление ставки или ставка уже в игре!!!";
+            }
+            request.getSession().setAttribute("message", message);
+            response.sendRedirect("/place-rate?id=" + rate.getRace().getId());
         }
-        request.getSession().setAttribute("message",message);
-        response.sendRedirect(request.getContextPath() + "/view-race");
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -57,7 +60,6 @@ public class ModifyRace extends HttpServlet {
         List<Rate> rates = (race.getId() != null) ? rateService.getRatesForRace(race.getId()) : Collections.EMPTY_LIST;
         request.setAttribute("race", race);
         request.setAttribute("rates", rates);
-        request.setAttribute("rateResults", referenceService.getRateResults());
         request.getRequestDispatcher("WEB-INF/jsp/modify-race.jsp").forward(request, response);
     }
 
@@ -72,7 +74,7 @@ public class ModifyRace extends HttpServlet {
                 message = String.format("Невозможно удалить забег %s с сыгранными ставками", id);
             }
         }
-        request.getSession().setAttribute("message",message);
+        request.getSession().setAttribute("message", message);
         response.sendRedirect("/view-race");
     }
 

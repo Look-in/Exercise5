@@ -8,7 +8,7 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <html>
 <head>
-    <fmt:message var="title" key="race.title"/>
+    <fmt:message var="title" key="login.title"/>
     <title>${title}</title>
     <link href="css/global.css" rel="stylesheet" type="text/css">
     <link href="css/item.css" rel="stylesheet" type="text/css">

@@ -3,6 +3,7 @@ D:\projects\java\Exercise5\src\main\java\by\dao\jdbc\user\UserJdbcDao.java
 D:\projects\java\Exercise5\src\main\java\by\dao\UserDao.java
 D:\projects\java\Exercise5\src\main\java\by\controller\login\LoginFilter.java
 D:\projects\java\Exercise5\src\main\java\by\Utils\annotations\OneToMany.java
+D:\projects\java\Exercise5\src\main\java\by\controller\ChangeRateResult.java
 D:\projects\java\Exercise5\src\main\java\by\controller\login\LoginController.java
 D:\projects\java\Exercise5\src\main\java\by\dao\RateDao.java
 D:\projects\java\Exercise5\src\main\java\by\jdbc\ConnectionPool.java
@@ -13,6 +14,8 @@ D:\projects\java\Exercise5\src\main\java\by\jdbc\CashStatement.java
 D:\projects\java\Exercise5\src\main\java\by\jdbc\PooledConnection.java
 D:\projects\java\Exercise5\src\main\java\by\controller\ViewRace.java
 D:\projects\java\Exercise5\src\main\java\by\Utils\HttpServletRequestReflectionUtils.java
+D:\projects\java\Exercise5\src\main\java\by\controller\PlaceRate.java
+D:\projects\java\Exercise5\src\main\java\by\service\reference\AttributeToCompare.java
 D:\projects\java\Exercise5\src\main\java\by\Utils\annotations\Entity.java
 D:\projects\java\Exercise5\src\main\java\by\dao\jdbc\race\RaceJdbcDao.java
 D:\projects\java\Exercise5\src\main\java\by\service\UserService.java
@@ -35,11 +38,14 @@ D:\projects\java\Exercise5\src\main\java\by\service\RaceServiceImpl.java
 D:\projects\java\Exercise5\src\main\java\by\jdbc\ConnectionPoolImpl.java
 D:\projects\java\Exercise5\src\main\java\by\Utils\annotations\JoinColumn.java
 D:\projects\java\Exercise5\src\main\java\by\entity\DefaultEntity.java
+D:\projects\java\Exercise5\src\main\java\by\service\reference\ReferenceService.java
+D:\projects\java\Exercise5\src\main\java\by\Utils\RaceSortUtil.java
 D:\projects\java\Exercise5\src\main\java\by\dao\jdbc\BaseJdbcDao.java
 D:\projects\java\Exercise5\src\main\java\by\dao\jdbc\basecrud\BaseEntityUpdater.java
 D:\projects\java\Exercise5\src\main\java\by\Utils\annotations\JoinTable.java
 D:\projects\java\Exercise5\src\main\java\by\dao\jdbc\basecrud\BaseEntityCreator.java
 D:\projects\java\Exercise5\src\main\java\by\controller\filter\MessageFilter.java
+D:\projects\java\Exercise5\src\main\java\by\service\reference\ReferenceServiceImpl.java
 D:\projects\java\Exercise5\src\main\java\by\Utils\ReflectionUtils.java
 D:\projects\java\Exercise5\src\main\java\by\dao\UserRoleDao.java
 D:\projects\java\Exercise5\src\main\java\by\Utils\annotations\Column.java

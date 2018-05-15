@@ -41,11 +41,11 @@ public class LoginController extends javax.servlet.http.HttpServlet {
             messages.put("Логин", "Неверные имя пользователя/пароль");
         }
         request.setAttribute("messages", messages);
-        request.getRequestDispatcher("jsp/login.jsp").forward(request, response);
+        request.getRequestDispatcher("WEB-INF/jsp/login.jsp").forward(request, response);
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        request.getRequestDispatcher("jsp/login.jsp").forward(request, response);
+        request.getRequestDispatcher("WEB-INF/jsp/login.jsp").forward(request, response);
     }
 
 }

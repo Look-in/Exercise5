@@ -1,15 +1,17 @@
 package by.controller;
 
 import by.dao.RaceDao;
-import org.jboss.weld.bean.SessionBean;
+import by.entity.Race;
+import by.service.reference.AttributeToCompare;
+import by.Utils.RaceSortUtil;
 
 import javax.inject.Inject;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.util.List;
 
 @WebServlet(
         name = "ViewRace",
@@ -21,9 +23,14 @@ public class ViewRace extends javax.servlet.http.HttpServlet {
     private RaceDao raceDao;
 
     private void doRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        request.setAttribute("race", raceDao.getRaces());
-        request.setAttribute("type", "Скачки");
-        request.getRequestDispatcher("jsp/view-race.jsp").forward(request, response);
+        request.setAttribute("sortBy", AttributeToCompare.values());
+        List<Race> races = raceDao.getRaces();
+        String sortingBy = request.getParameter("sortingBy");
+        if (sortingBy != null && !sortingBy.equals("")) {
+            RaceSortUtil.compare(races, AttributeToCompare.valueOf(request.getParameter("sortingBy")));
+        }
+        request.setAttribute("race", races);
+        request.getRequestDispatcher("WEB-INF/jsp/view-race.jsp").forward(request, response);
     }
 
     protected void doPost(javax.servlet.http.HttpServletRequest request, javax.servlet.http.HttpServletResponse response) throws javax.servlet.ServletException, IOException {
