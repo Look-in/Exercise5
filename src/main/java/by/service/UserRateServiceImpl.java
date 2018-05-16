@@ -16,4 +16,10 @@ public class UserRateServiceImpl implements UserRateService {
         user.getRates().add(rate);
         userDao.update(user);
     }
+
+    @Override
+    public void replaceUserRate(User user, Rate rate) {
+        user.getRates().remove(rate);
+        userDao.update(user);
+    }
 }

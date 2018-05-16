@@ -11,4 +11,6 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 public @interface JoinColumn {
 
     String name();
+
+    boolean updatable() default true;
 }

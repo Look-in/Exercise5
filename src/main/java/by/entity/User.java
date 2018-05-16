@@ -13,12 +13,14 @@ import java.util.Set;
 @Table(name = "users")
 public class User extends DefaultEntity {
 
+    //@Column(name = "username", updatable = false)
     private String userName;
 
     @ManyToOne
-    @JoinColumn(name = "role_id")
+    @JoinColumn(name = "role_id", updatable = false)
     private Role role;
 
+    @Column(name = "password", updatable = false)
     private String password;
 
     @OneToMany(fetch = FetchType.LAZY)

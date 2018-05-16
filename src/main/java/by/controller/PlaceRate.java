@@ -44,6 +44,7 @@ public class PlaceRate extends HttpServlet {
             String message;
             if (rate.getRateResult().getId() == 1 && user.getRates().stream().noneMatch(e -> e.getId().equals(rate.getId()))) {
                 userRateService.placeUserRate(user, rate);
+                request.getSession().setAttribute("countUserRates", user.getRates().size());
                 message = String.format("Ставка %s сделана", rate.getId());
             } else {
                 message = "Повторное добавление ставки или ставка уже в игре!!!";
@@ -64,18 +65,17 @@ public class PlaceRate extends HttpServlet {
     }
 
     protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        String message = null;
-        if (request.getParameter("id") != null) {
-            int id = Integer.valueOf(request.getParameter("id"));
-            if (rateService.isAllNewRates(id)) {
-                raceService.deleteRace(id);
-                message = String.format("Забег %s успешно удален", id);
-            } else {
-                message = String.format("Невозможно удалить забег %s с сыгранными ставками", id);
-            }
+        String message;
+        Integer id = request.getParameter("id") !=null ? Integer.valueOf(request.getParameter("id")) : null;
+        Rate rate =  id!= null ? rateService.getRate(id) : null;
+        if (rate != null && rate.getRateResult().getId() == 1) {
+            User user = (User) request.getSession().getAttribute("user");
+            userRateService.replaceUserRate(user, rate);
+            message = String.format("Ставка %s успешно удалена", id);
+        } else {
+            message = String.format("Невозможно удалить сыгранную ставку %s", id);
         }
         request.getSession().setAttribute("message", message);
         response.sendRedirect("/view-race");
     }
-
 }

@@ -10,5 +10,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Retention(value=RUNTIME)
 public @interface Column {
 
-    String name();
+    String name() ;
+
+    boolean updatable() default true;
 }

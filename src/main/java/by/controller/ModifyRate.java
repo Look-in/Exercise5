@@ -60,7 +60,11 @@ public class ModifyRate extends HttpServlet {
             }
         }
         request.getSession().setAttribute("message",message);
-        response.sendRedirect(request.getContextPath() + "/view-race");
+        if (request.getParameter("raceId") != null) {
+            response.sendRedirect("/modify-race?id=" + request.getParameter("raceId"));
+        } else {
+            response.sendRedirect("/view-race");
+        }
     }
 
 }

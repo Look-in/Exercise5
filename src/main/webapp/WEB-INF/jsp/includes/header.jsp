@@ -13,7 +13,7 @@
         </form>
     </div>
     <div>
-        <a class="user-form" href="${shoppingcart}"> Cart ${countBasketItem}</a>
+        <a class="user-form" href="${shoppingcart}"> Cart ${countUserRates}</a>
     </div>
 </c:if>
 <c:if test="${user == null}">

@@ -30,7 +30,7 @@ public class RaceJdbcDao extends BaseJdbcDao implements RaceDao {
 
     @Override
     public void delete(Integer id) {
-
+        remove(Race.class, id);
     }
 
 }

@@ -13,25 +13,25 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Slf4j
-public class BaseEntityCreator extends BaseEntityUpdater {
+public class BaseEntityCreator extends BaseEntityDeleter {
 
-    private PreparedStatement createPreparedStatement(String sql, Connection connection, Object entity) throws SQLException {
+    private PreparedStatement createPreparedStatement(String sql, Connection connection) throws SQLException {
         return connection.prepareStatement(sql);
     }
 
-    protected   <T> void insert(String sql, Class<T> tClass, T entity) {
-        if (tClass.getAnnotation(Entity.class) == null) return;
+    void insert(String sql) {
+        if (sql == null) return;
         try (Connection connection = getConnectionPool().getConnection()) {
-            createByConnection(sql, entity, connection);
+            createByConnection(sql, connection);
         } catch (SQLException e) {
-            String error = String.format("Can't insert entity %s . Error %s", entity.toString(), e);
+            String error = String.format("Can't insert entity %s . Error %s", sql, e);
             log.error(error);
             throw new RuntimeException(error);
         }
     }
 
     protected <T> void persist(Class<T> tClass, T entity) {
-        insert(sqlGeneration(tClass, entity), tClass, entity);
+        insert(sqlGeneration(tClass, entity));
     }
 
     private <T> String sqlGeneration(Class<T> tClass, T entity) {
@@ -54,7 +54,7 @@ public class BaseEntityCreator extends BaseEntityUpdater {
     }
 
     private <T> void createByConnection(String sql, T entity, Connection connection) {
-        try (PreparedStatement statement = createPreparedStatement(sql, connection, entity)) {
+        try (PreparedStatement statement = createPreparedStatement(sql, connection)) {
             statement.executeUpdate();
             try (ResultSet keys = statement.getGeneratedKeys()) {
                 keys.next();
@@ -67,6 +67,17 @@ public class BaseEntityCreator extends BaseEntityUpdater {
                     "Error inserting entity to DB: " + exc.getMessage());
         }
     }
+
+    private <T> void createByConnection(String sql, Connection connection) {
+        try (PreparedStatement statement = createPreparedStatement(sql, connection)) {
+            statement.executeUpdate();
+        } catch (Exception exc) {
+            log.error("Error inserting entity to DB: " + exc.getMessage());
+            throw new RuntimeException(
+                    "Error inserting entity to DB: " + exc.getMessage());
+        }
+    }
+
 
     private <T> void setValueOfId(T object, Object value) {
         for (Field field : ReflectionUtils.getAllClassFields(object.getClass())) {

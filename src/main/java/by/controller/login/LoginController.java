@@ -35,6 +35,9 @@ public class LoginController extends javax.servlet.http.HttpServlet {
             User user = userService.checkPasswordAndGetUser(username, password);
             if (user != null) {
                 request.getSession().setAttribute("user", user);
+                if (user.getRole().getRole().equals("client") && user.getRates().size() > 0) {
+                    request.getSession().setAttribute("countUserRates", user.getRates().size());
+                }
                 response.sendRedirect(request.getContextPath() + "/view-race");
                 return;
             }

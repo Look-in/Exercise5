@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
  * @author Serg Shankunas <shserg2012@gmail.com>
  */
 @Slf4j
-public class BaseEntityReader extends BaseEntityCreator {
+public class BaseEntityReader extends BaseConnectionKeeper {
 
     /**
      * Карты для хранения сгенерированных SQL запросов
@@ -258,7 +258,7 @@ public class BaseEntityReader extends BaseEntityCreator {
         String sql = sqlGenerationOneToMany(joinTable.name(),
                 joinTable.joinColumns().name(), joinTable.inverseJoinColumns().name());
         fieldObject = findInversedColumnElements(DaoReflectionUtils.getGenericParameterField(field),
-                sql, DaoReflectionUtils.getIdValueFromObject(tClass, object));
+                sql, DaoReflectionUtils.getIdValueFromObject(object));
         field.setAccessible(true);
         try {
             field.set(object, fieldObject);

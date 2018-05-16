@@ -77,6 +77,7 @@ ${message}<br>
                     <c:when test="${user.role.role == 'bookmaker'}">
                         <form name="Delete" action="<c:url value="/modify-rate"/>" method="POST">
                             <input type="hidden" name="id" value="${ elem.id }">
+                            <input type="hidden" name="raceId" value="${  race.id }">
                             <input type="hidden" name="action" value="delete">
                             <input type="submit" name="button" value=<fmt:message key="button.delete"/>>
                         </form>

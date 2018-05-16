@@ -37,6 +37,6 @@ public class RateJdbcDao extends BaseJdbcDao implements RateDao {
 
     @Override
     public void delete(Integer id) {
-
+        remove(Rate.class, id);
     }
 }

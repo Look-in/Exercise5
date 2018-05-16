@@ -6,18 +6,20 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.Field;
 import java.sql.*;
+import java.util.Collection;
+import java.util.Set;
 
 @Slf4j
-public class BaseEntityUpdater extends BaseConnectionKeeper {
+public class BaseEntityUpdater extends BaseEntityCreator {
 
     private PreparedStatement updatePreparedStatement(String sql, Connection connection, Object entity) throws SQLException {
         PreparedStatement statement = connection.prepareStatement(sql);
-        statement.setObject(1, getValueOfId(entity));
+        statement.setObject(1, DaoReflectionUtils.getIdValueFromObject(entity));
         return statement;
     }
 
     private <T> void update(String sql, Class<T> tClass, T entity) {
-        if (tClass.getAnnotation(Entity.class) == null) return;
+        if (tClass.getAnnotation(Entity.class) == null || sql == null) return;
         try (Connection connection = getConnectionPool().getConnection()) {
             updateByConnection(sql, entity, connection);
         } catch (SQLException e) {
@@ -30,9 +32,11 @@ public class BaseEntityUpdater extends BaseConnectionKeeper {
     }
 
     private <T> String sqlGeneration(Class<T> tClass, T entity) {
+        String fields = getEntityFields(tClass, entity, false);
+        if ("".equals(fields)) return null;
         Table table = tClass.getAnnotation(Table.class);
         String tableName = (table != null ? table.name() : tClass.getSimpleName());
-        String sql = String.format("update %s set %s where id=?", tableName, getEntityFields(tClass, entity, false));
+        String sql = String.format("update %s set %s where id=?", tableName, fields);
         log.debug("Create SQL: {}", sql);
         return sql;
     }
@@ -47,18 +51,17 @@ public class BaseEntityUpdater extends BaseConnectionKeeper {
         }
     }
 
-    private <T> Object getValueOfId(T object) {
-        for (Field field : ReflectionUtils.getAllClassFields(object.getClass())) {
-            if (field.getAnnotation(Id.class) != null) {
-                try {
-                    field.setAccessible(true);
-                    return field.get(object);
-                } catch (IllegalAccessException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-        return null;
+    @SuppressWarnings("unchecked")
+    private void updateOneToManyField(Field field, Object id, Object value){
+        JoinTable joinTable = field.getAnnotation(JoinTable.class);
+        Set values = (Set) value;
+        String deleteSql = String.format("delete from %s where %s=?;", joinTable.name(), joinTable.joinColumns().name());
+        delete(deleteSql, id);
+        values.forEach(e -> {
+            String sql = String.format("insert into %s (%s,%s) values (%s,%s);", joinTable.name(), joinTable.joinColumns().name(),
+                    joinTable.inverseJoinColumns().name(), id, DaoReflectionUtils.getIdValueFromObject(e));
+            insert(sql);
+            });
     }
 
     @SuppressWarnings("unchecked")
@@ -70,14 +73,18 @@ public class BaseEntityUpdater extends BaseConnectionKeeper {
             }
             Column column = field.getAnnotation(Column.class);
             JoinColumn joinColumn = field.getAnnotation(JoinColumn.class);
-            JoinTable joinTable = field.getAnnotation(JoinTable.class);
+            OneToMany oneToMany = field.getAnnotation(OneToMany.class);
             try {
                 field.setAccessible(true);
                 Object value = field.get(object);
                 if (value == null) continue;
                 if (!getId) {
                     if (field.getAnnotation(Id.class) == null) {
-                        if (joinTable != null) continue;
+                        if ((column != null && !column.updatable()) || (joinColumn!= null && !joinColumn.updatable())) continue;
+                        if (oneToMany != null && Collection.class.isAssignableFrom(field.getType())) {
+                            updateOneToManyField(field, DaoReflectionUtils.getIdValueFromObject(object), value);
+                            continue;
+                        }
                         if (fieldNameAndValue.length() != 0) {
                             fieldNameAndValue.append(", ");
                         }

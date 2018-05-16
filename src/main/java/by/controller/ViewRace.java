@@ -2,14 +2,17 @@ package by.controller;
 
 import by.dao.RaceDao;
 import by.entity.Race;
+import by.entity.User;
 import by.service.reference.AttributeToCompare;
 import by.Utils.RaceSortUtil;
 
 import javax.inject.Inject;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.List;
 
@@ -17,7 +20,7 @@ import java.util.List;
         name = "ViewRace",
         description = "Сервлет для передачи списка забегов",
         urlPatterns = "/view-race")
-public class ViewRace extends javax.servlet.http.HttpServlet {
+public class ViewRace extends HttpServlet {
 
     @Inject
     private RaceDao raceDao;

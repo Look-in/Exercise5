@@ -53,8 +53,8 @@ public class DaoReflectionUtils {
         return (type instanceof Class ? (Class<?>) type : (Class<?>) ((ParameterizedType) type).getRawType());
     }
 
-    static  <T> Object getIdValueFromObject(Class<T> tClass, T object) {
-        List<Field> fields = ReflectionUtils.getAllClassFields(tClass);
+    static  <T> Object getIdValueFromObject(T object) {
+        List<Field> fields = ReflectionUtils.getAllClassFields(object.getClass());
         for (Field field : fields) {
             if (field.getAnnotation(Id.class) != null) {
                 field.setAccessible(true);
