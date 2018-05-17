@@ -16,7 +16,7 @@ public class MessageFilter implements Filter {
         HttpSession session = request.getSession(false);
         if (session == null) return null;
         String message = (String) session.getAttribute("message");
-        session.setAttribute("message", null);
+        session.removeAttribute("message");
         return message;
     }
 
