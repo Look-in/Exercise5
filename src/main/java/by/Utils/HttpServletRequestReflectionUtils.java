@@ -27,14 +27,14 @@ public class HttpServletRequestReflectionUtils {
     private static <T> T getValueFromHttpServletRequest(String value, Class<T> clazz) {
         if (value == null || "".equals(value)) return null;
         if (clazz.isAssignableFrom(Integer.class)) {
-               return (T) Integer.valueOf(value);
-           }
-            if (clazz.isAssignableFrom(Boolean.class)) {
-                return (T) Boolean.valueOf(value);
-            }
-            if (clazz.isAssignableFrom(Double.class)) {
-                return (T) Double.valueOf(value);
-            }
+            return (T) Integer.valueOf(value);
+        }
+        if (clazz.isAssignableFrom(Boolean.class)) {
+            return (T) Boolean.valueOf(value);
+        }
+        if (clazz.isAssignableFrom(Double.class)) {
+            return (T) Double.valueOf(value);
+        }
         return (T) value;
     }
 
@@ -48,7 +48,8 @@ public class HttpServletRequestReflectionUtils {
                 continue;
             }
             try {
-                if (ReflectionUtils.isPrimitiveOrWrapperType(field.getType())) { ;
+                if (ReflectionUtils.isPrimitiveOrWrapperType(field.getType())) {
+                    ;
                     String reqParam = parentClassType == null ? field.getName() : parentClassType.concat(field.getName());
                     fieldObject = getValueFromHttpServletRequest(request.getParameter(reqParam), field.getType());
                 } else {

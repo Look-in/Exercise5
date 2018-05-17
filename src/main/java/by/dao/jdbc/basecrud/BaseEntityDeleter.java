@@ -1,6 +1,7 @@
 package by.dao.jdbc.basecrud;
 
-import by.Utils.annotations.*;
+import by.Utils.annotations.Entity;
+import by.Utils.annotations.Table;
 import lombok.extern.slf4j.Slf4j;
 
 import java.sql.Connection;
@@ -17,10 +18,12 @@ public class BaseEntityDeleter extends BaseEntityReader {
     }
 
     void delete(String sql, Object id) {
-        try (Connection connection = getConnectionPool().getConnection()) {
-            deleteByConnection(sql, id, connection);
-        } catch (SQLException e) {
-            throw new RuntimeException("Can't delete entity by Id = " + id + e);
+        try (PreparedStatement statement = deletePreparedStatement(sql, getBaseConnectionKeeper().getConnection(), id)) {
+            statement.executeUpdate();
+        } catch (Exception exc) {
+            log.error("Error deleting entity from DB: " + exc.getMessage());
+            throw new RuntimeException(
+                    "Error deleting entity from DB: " + exc.getMessage());
         }
     }
 
@@ -35,15 +38,5 @@ public class BaseEntityDeleter extends BaseEntityReader {
         String sql = String.format("delete from %s where id=?", tableName);
         log.debug("Create SQL: {}", sql);
         return sql;
-    }
-
-    private <T> void deleteByConnection(String sql, T entity, Connection connection) {
-        try (PreparedStatement statement = deletePreparedStatement(sql, connection, entity)) {
-            statement.executeUpdate();
-        } catch (Exception exc) {
-            log.error("Error deleting entity in DB: " + exc.getMessage());
-            throw new RuntimeException(
-                    "Error deleting entity to DB: " + exc.getMessage());
-        }
     }
 }

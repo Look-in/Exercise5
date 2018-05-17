@@ -2,9 +2,7 @@ package by.dao.jdbc.race;
 
 import by.dao.RateDao;
 import by.dao.jdbc.BaseJdbcDao;
-import by.entity.Race;
 import by.entity.Rate;
-import by.entity.RateResult;
 
 import java.util.List;
 

@@ -2,13 +2,19 @@ package by.dao.jdbc.basecrud;
 
 import by.Utils.ReflectionUtils;
 import by.Utils.annotations.*;
+import by.dao.jdbc.basecrud.connectionkeeper.BaseConnectionKeeper;
 import javassist.util.proxy.MethodHandler;
 import javassist.util.proxy.ProxyFactory;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
+import javax.inject.Inject;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-import java.sql.*;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
@@ -24,7 +30,11 @@ import java.util.stream.Collectors;
  * @author Serg Shankunas <shserg2012@gmail.com>
  */
 @Slf4j
-public class BaseEntityReader extends BaseConnectionKeeper {
+public class BaseEntityReader {
+
+    @Getter
+    @Inject
+    private BaseConnectionKeeper baseConnectionKeeper;
 
     /**
      * Карты для хранения сгенерированных SQL запросов
@@ -37,11 +47,13 @@ public class BaseEntityReader extends BaseConnectionKeeper {
      * Метод проксирования класса с переопределенным методом для поля
      * помеченным, как Lazy. Если поле null, то подгружает данные из БД.
      * Для выборки использует новый коннект.
+     *
      * @param clazz Проксируемый класс
      * @return прокси класс
      */
     @SuppressWarnings("unchecked")
-    private <T> T getProxy(Class<T> clazz) {
+
+    private <T> T getProxyWithLazyFieldInitializationEntity(Class<T> clazz) {
         List<Field> lazyFields = ReflectionUtils.getAllClassFields(clazz)
                 .stream().filter(e -> e.getAnnotation(OneToMany.class) != null &&
                         e.getAnnotation(OneToMany.class).fetch() == OneToMany.FetchType.LAZY)
@@ -77,15 +89,15 @@ public class BaseEntityReader extends BaseConnectionKeeper {
 
     /**
      * Метод для выборки из БД элементов, связанных с таблицей сущности по принципу OneToMany
+     *
      * @param sql - SQL запрос
-     * @param id - Id сущности
+     * @param id  - Id сущности
      * @param <T> tClass
      * @return список элементов класса-аргумента
      */
     private <T> Set<T> findInversedColumnElements(Class<T> tClass, String sql, Object id) {
         Set<T> elements = new HashSet<>();
-        try (Connection connection = getConnectionPool().getConnection();
-             PreparedStatement statement = selectPreparedStatement(sql, connection, id);
+        try (PreparedStatement statement = selectPreparedStatement(sql, id);
              ResultSet rs = statement.executeQuery()) {
             while (rs.next()) {
                 elements.add(find(tClass, rs.getString("id")));
@@ -105,26 +117,34 @@ public class BaseEntityReader extends BaseConnectionKeeper {
         return sql;
     }
 
-    private PreparedStatement selectPreparedStatement(String sql, Connection connection, Object id)
+    private PreparedStatement selectPreparedStatement(String sql, Object id)
             throws SQLException {
-        PreparedStatement statement = connection.prepareStatement(sql);
+        PreparedStatement statement = getBaseConnectionKeeper().getConnection().prepareStatement(sql);
         statement.setObject(1, id);
         return statement;
     }
 
     /**
      * Метод возвращает элемент класса Class<T> по идентификатору, используя параметр - SQL запрос
+     *
      * @param sql строка запроса
-     * @param id идентификатор сущности
+     * @param id  идентификатор сущности
      * @return элемент класса-аргумента
      */
+    @SuppressWarnings("unchecked")
     protected <T> T find(String sql, Class<T> tClass, Object id) {
-       // if (tClass.getAnnotation(Entity.class) == null) return null;
-        T object;
-        try (Connection connection = getConnectionPool().getConnection()) {
-            object = findByConnection(sql, tClass, id, connection);
-        } catch (SQLException e) {
-            String error = String.format("Error finding element Class: %s by id = %s + message: %s", tClass.getSimpleName(), id, e);
+        T object = null;
+        try (PreparedStatement statement = selectPreparedStatement(sql, id);
+             ResultSet rs = statement.executeQuery()) {
+            while (rs.next()) {
+                if (ReflectionUtils.isPrimitiveOrWrapperType(tClass)) {
+                    object = (T) rs.getObject(1);
+                } else {
+                    object = getEntityResultSet(rs, tClass);
+                }
+            }
+        } catch (Exception exc) {
+            String error = String.format("Error reading %s from DB by id = %s. Error: %s", tClass.getSimpleName(), id, exc);
             log.error(error);
             throw new RuntimeException(error);
         }
@@ -133,28 +153,30 @@ public class BaseEntityReader extends BaseConnectionKeeper {
 
     /**
      * Метод возвращает элемент класса Class<T> по идентификатору, генерируя SQL запрос
+     *
      * @param id идентификатор сущности
      * @return элемент класса-аргумента
      */
     protected <T> T find(Class<T> tClass, Object id) {
         if (tClass.getAnnotation(Entity.class) == null) return null;
+
         return find(sqlGeneration(tClass, true), tClass, id);
     }
 
     /**
      * Метод возвращает спсок элементов класса Class<T> по идентификатору,
      * используя параметр - SQL запрос
+     *
      * @param sql строка запроса
      * @return список элементов класса-аргумента
      */
     protected <T> List<T> findAll(String sql, Class<T> tClass) {
         if (tClass.getAnnotation(Entity.class) == null) return null;
         List<T> entities = new ArrayList<>();
-        try (Connection connection = getConnectionPool().getConnection();
-             Statement st = connection.createStatement();
+        try (Statement st = getBaseConnectionKeeper().getConnection().createStatement();
              ResultSet rs = st.executeQuery(sql)) {
             while (rs.next()) {
-                entities.add(getEntityResultSet(rs, tClass, connection));
+                entities.add(getEntityResultSet(rs, tClass));
             }
         } catch (SQLException exc) {
             String error = String.format("Error finding list of element Class: %s + message: %s", tClass.getSimpleName(), exc);
@@ -171,7 +193,8 @@ public class BaseEntityReader extends BaseConnectionKeeper {
 
     /**
      * Метод генерирует строку SQL запроса из класса-сущности, используя рефлексию
-     * @param tClass класс для генерации запроса
+     *
+     * @param tClass     класс для генерации запроса
      * @param requiredId требуется Id
      * @return строку запроса
      */
@@ -218,37 +241,9 @@ public class BaseEntityReader extends BaseConnectionKeeper {
     }
 
     /**
-     * Метод принимает connection и выполняет SQL запрос к базе
-     * @param sql
-     * @param tClass
-     * @param id
-     * @param connection
-     * @param <T>
-     * @return элемент класса T из БД
-     */
-    @SuppressWarnings("unchecked")
-    private <T> T findByConnection(String sql, Class<T> tClass, Object id, Connection connection) {
-        T object = null;
-        try (PreparedStatement statement = selectPreparedStatement(sql, connection, id);
-             ResultSet rs = statement.executeQuery()) {
-            while (rs.next()) {
-                if (ReflectionUtils.isPrimitiveOrWrapperType(tClass)) {
-                 object = (T) rs.getObject(1);
-                } else {
-                    object = getEntityResultSet(rs, tClass, connection);
-                }
-            }
-        } catch (Exception exc) {
-            String error = String.format("Error reading %s from DB by id = %s. Error: %s", tClass.getSimpleName(), id, exc);
-            log.error(error);
-            throw new RuntimeException(error);
-        }
-        return object;
-    }
-
-    /**
      * Метод заполняет поля класса, помеченные аннотиацией FetchType
-     * @param field поле класса, аннотированное FetchType
+     *
+     * @param field  поле класса, аннотированное FetchType
      * @param tClass класс сущности
      * @param object элемент класса Т
      */
@@ -271,6 +266,7 @@ public class BaseEntityReader extends BaseConnectionKeeper {
 
     /**
      * Метод выполнеят поиск полей, аннотированных FetchType.Eager и заполняет поля из БД
+     *
      * @param tClass - класс сущности
      * @param object - объект сущности
      */
@@ -285,13 +281,13 @@ public class BaseEntityReader extends BaseConnectionKeeper {
     /**
      * Метод получает ResultSet, класс и коннект, используя рефлексию заполняет поля из ResultSet
      *
-     * @param rs ResultSet
-     * @param tClass класс сущности
+     * @param rs         ResultSet
+     * @param tClass     класс сущности
      * @param connection коннект
      * @return прокси объект сущности
      */
-    private <T> T getEntityResultSet(ResultSet rs, Class<T> tClass, Connection connection) {
-        T object = getProxy(tClass);
+    private <T> T getEntityResultSet(ResultSet rs, Class<T> tClass) {
+        T object = getProxyWithLazyFieldInitializationEntity(tClass);
         List<Field> fields = ReflectionUtils.getAllClassFields(tClass);
         for (Field field : fields) {
             if ((field.getModifiers() & java.lang.reflect.Modifier.FINAL) == java.lang.reflect.Modifier.FINAL) {
@@ -304,8 +300,8 @@ public class BaseEntityReader extends BaseConnectionKeeper {
                     fieldObject = DaoReflectionUtils.getValueFromResultSet(rs, name);
                 } else {
                     if (field.getAnnotation(ManyToOne.class) != null) {
-                        fieldObject = findByConnection(sqlGeneration(field.getType(), true), field.getType(),
-                                DaoReflectionUtils.getValueFromResultSet(rs, name), connection);
+                        fieldObject = find(sqlGeneration(field.getType(), true), field.getType(),
+                                DaoReflectionUtils.getValueFromResultSet(rs, name));
                     }
                 }
                 field.setAccessible(true);

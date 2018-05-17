@@ -53,7 +53,7 @@ public class DaoReflectionUtils {
         return (type instanceof Class ? (Class<?>) type : (Class<?>) ((ParameterizedType) type).getRawType());
     }
 
-    static  <T> Object getIdValueFromObject(T object) {
+    static <T> Object getIdValueFromObject(T object) {
         List<Field> fields = ReflectionUtils.getAllClassFields(object.getClass());
         for (Field field : fields) {
             if (field.getAnnotation(Id.class) != null) {
@@ -61,10 +61,23 @@ public class DaoReflectionUtils {
                 try {
                     return field.get(object);
                 } catch (IllegalAccessException e) {
-                    throw new RuntimeException("Error getting Value from object: "+e);
+                    throw new RuntimeException("Error getting Value from object: " + e);
                 }
             }
         }
         return null;
+    }
+
+    static <T> void setValueOfId(T object, Object value) {
+        for (Field field : ReflectionUtils.getAllClassFields(object.getClass())) {
+            if (field.getAnnotation(Id.class) != null) {
+                try {
+                    field.setAccessible(true);
+                    field.set(object, value);
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 }

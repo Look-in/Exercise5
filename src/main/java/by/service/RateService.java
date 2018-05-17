@@ -21,4 +21,6 @@ public interface RateService {
     Rate getNewRate(int raceId);
 
     int getRateResultOfRate(int rateId);
+
+    boolean hasRates(int raceId);
 }

@@ -1,12 +1,12 @@
 package by.entity;
 
-import lombok.Data;
 import by.Utils.annotations.Entity;
+import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 @Data
 @Entity
-@EqualsAndHashCode(callSuper=true)
+@EqualsAndHashCode(callSuper = true)
 public class Race extends DefaultEntity {
 
     private String race;

@@ -1,11 +1,13 @@
 package by.dao.jdbc.basecrud;
 
 import by.Utils.ReflectionUtils;
-import by.Utils.annotations.*;
+import by.Utils.annotations.Column;
+import by.Utils.annotations.Id;
+import by.Utils.annotations.JoinColumn;
+import by.Utils.annotations.Table;
 import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.Field;
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -15,23 +17,33 @@ import java.util.Map;
 @Slf4j
 public class BaseEntityCreator extends BaseEntityDeleter {
 
-    private PreparedStatement createPreparedStatement(String sql, Connection connection) throws SQLException {
-        return connection.prepareStatement(sql);
+    private PreparedStatement createPreparedStatement(String sql) throws SQLException {
+        return getBaseConnectionKeeper().getConnection().prepareStatement(sql);
+    }
+
+    protected <T> void persist(Class<T> tClass, T entity) {
+        try (PreparedStatement statement = createPreparedStatement(sqlGeneration(tClass, entity))) {
+            statement.executeUpdate();
+            try (ResultSet keys = statement.getGeneratedKeys()) {
+                keys.next();
+                DaoReflectionUtils.setValueOfId(entity, keys.getInt(1));
+            }
+        } catch (Exception exc) {
+            log.error("Error inserting entity to DB: " + exc.getMessage());
+            throw new RuntimeException(
+                    "Error inserting entity to DB: " + exc.getMessage());
+        }
     }
 
     void insert(String sql) {
         if (sql == null) return;
-        try (Connection connection = getConnectionPool().getConnection()) {
-            createByConnection(sql, connection);
-        } catch (SQLException e) {
-            String error = String.format("Can't insert entity %s . Error %s", sql, e);
-            log.error(error);
-            throw new RuntimeException(error);
+        try (PreparedStatement statement = createPreparedStatement(sql)) {
+            statement.executeUpdate();
+        } catch (Exception exc) {
+            log.error("Error inserting entity to DB: " + exc.getMessage());
+            throw new RuntimeException(
+                    "Error inserting entity to DB: " + exc.getMessage());
         }
-    }
-
-    protected <T> void persist(Class<T> tClass, T entity) {
-        insert(sqlGeneration(tClass, entity));
     }
 
     private <T> String sqlGeneration(Class<T> tClass, T entity) {
@@ -53,44 +65,6 @@ public class BaseEntityCreator extends BaseEntityDeleter {
         return sql;
     }
 
-    private <T> void createByConnection(String sql, T entity, Connection connection) {
-        try (PreparedStatement statement = createPreparedStatement(sql, connection)) {
-            statement.executeUpdate();
-            try (ResultSet keys = statement.getGeneratedKeys()) {
-                keys.next();
-                //**!!!!!!! Обратить внимание!!!!!!!
-                setValueOfId(entity, keys.getInt(1));
-            }
-        } catch (Exception exc) {
-            log.error("Error inserting entity to DB: " + exc.getMessage());
-            throw new RuntimeException(
-                    "Error inserting entity to DB: " + exc.getMessage());
-        }
-    }
-
-    private <T> void createByConnection(String sql, Connection connection) {
-        try (PreparedStatement statement = createPreparedStatement(sql, connection)) {
-            statement.executeUpdate();
-        } catch (Exception exc) {
-            log.error("Error inserting entity to DB: " + exc.getMessage());
-            throw new RuntimeException(
-                    "Error inserting entity to DB: " + exc.getMessage());
-        }
-    }
-
-
-    private <T> void setValueOfId(T object, Object value) {
-        for (Field field : ReflectionUtils.getAllClassFields(object.getClass())) {
-            if (field.getAnnotation(Id.class) != null) {
-                try {
-                    field.setAccessible(true);
-                    field.set(object, value);
-                } catch (IllegalAccessException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
 
     @SuppressWarnings("unchecked")
     private <T> Map<String, Object> getEntityFields(Class<T> tClass, T object, boolean getId) {

@@ -5,25 +5,29 @@ import by.Utils.annotations.*;
 import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.Field;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Set;
 
 @Slf4j
 public class BaseEntityUpdater extends BaseEntityCreator {
 
-    private PreparedStatement updatePreparedStatement(String sql, Connection connection, Object entity) throws SQLException {
-        PreparedStatement statement = connection.prepareStatement(sql);
+    private PreparedStatement updatePreparedStatement(String sql, Object entity) throws SQLException {
+        PreparedStatement statement = getBaseConnectionKeeper().getConnection().prepareStatement(sql);
         statement.setObject(1, DaoReflectionUtils.getIdValueFromObject(entity));
         return statement;
     }
 
     private <T> void update(String sql, Class<T> tClass, T entity) {
         if (tClass.getAnnotation(Entity.class) == null || sql == null) return;
-        try (Connection connection = getConnectionPool().getConnection()) {
-            updateByConnection(sql, entity, connection);
-        } catch (SQLException e) {
-            throw new RuntimeException("Can't update entity " + entity.toString() + e);
+        try (PreparedStatement statement = updatePreparedStatement(sql, entity)) {
+            statement.executeUpdate();
+        } catch (Exception exc) {
+            log.error("Error updating entity to DB: " + exc.getMessage());
+            throw new RuntimeException(
+                    "Error updating entity to DB: " + exc.getMessage());
         }
     }
 
@@ -42,17 +46,11 @@ public class BaseEntityUpdater extends BaseEntityCreator {
     }
 
     private <T> void updateByConnection(String sql, T entity, Connection connection) {
-        try (PreparedStatement statement = updatePreparedStatement(sql, connection, entity)) {
-            statement.executeUpdate();
-        } catch (Exception exc) {
-            log.error("Error updating entity to DB: " + exc.getMessage());
-            throw new RuntimeException(
-                    "Error updating entity to DB: " + exc.getMessage());
-        }
+
     }
 
     @SuppressWarnings("unchecked")
-    private void updateOneToManyField(Field field, Object id, Object value){
+    private void updateOneToManyField(Field field, Object id, Object value) {
         JoinTable joinTable = field.getAnnotation(JoinTable.class);
         Set values = (Set) value;
         String deleteSql = String.format("delete from %s where %s=?;", joinTable.name(), joinTable.joinColumns().name());
@@ -61,7 +59,7 @@ public class BaseEntityUpdater extends BaseEntityCreator {
             String sql = String.format("insert into %s (%s,%s) values (%s,%s);", joinTable.name(), joinTable.joinColumns().name(),
                     joinTable.inverseJoinColumns().name(), id, DaoReflectionUtils.getIdValueFromObject(e));
             insert(sql);
-            });
+        });
     }
 
     @SuppressWarnings("unchecked")
@@ -80,7 +78,8 @@ public class BaseEntityUpdater extends BaseEntityCreator {
                 if (value == null) continue;
                 if (!getId) {
                     if (field.getAnnotation(Id.class) == null) {
-                        if ((column != null && !column.updatable()) || (joinColumn!= null && !joinColumn.updatable())) continue;
+                        if ((column != null && !column.updatable()) || (joinColumn != null && !joinColumn.updatable()))
+                            continue;
                         if (oneToMany != null && Collection.class.isAssignableFrom(field.getType())) {
                             updateOneToManyField(field, DaoReflectionUtils.getIdValueFromObject(object), value);
                             continue;

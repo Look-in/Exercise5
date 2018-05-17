@@ -4,7 +4,6 @@ import by.dao.RaceDao;
 import by.dao.RateDao;
 import by.dao.RateResultDao;
 import by.entity.Rate;
-import by.entity.RateResult;
 
 import javax.inject.Inject;
 import java.util.List;
@@ -36,6 +35,11 @@ public class RateServiceImpl implements RateService {
     public boolean isAllNewRates(int raceId) {
         return rateDao.getRates().stream().filter(e -> e.getRace().getId() == raceId)
                 .noneMatch(e -> e.getRateResult().getId() != 1);
+    }
+
+    @Override
+    public boolean hasRates(int raceId) {
+        return rateDao.getRates().stream().anyMatch(e -> e.getRace().getId() == raceId);
     }
 
     @Override

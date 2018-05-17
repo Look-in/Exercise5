@@ -16,6 +16,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 @WebServlet(
         name = "Place rate servlet",
@@ -50,24 +51,31 @@ public class PlaceRate extends HttpServlet {
                 message = "Повторное добавление ставки или ставка уже в игре!!!";
             }
             request.getSession().setAttribute("message", message);
-            response.sendRedirect("/place-rate?id=" + rate.getRace().getId());
+            response.sendRedirect(request.getContextPath() + "/place-rate?id=" + rate.getRace().getId());
         }
     }
 
+    @SuppressWarnings("unchecked")
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         Race race = (request.getParameter("id") != null) ?
-                raceService.getRace(Integer.valueOf(request.getParameter("id"))) :
-                new Race();
-        List<Rate> rates = (race.getId() != null) ? rateService.getRatesForRace(race.getId()) : Collections.EMPTY_LIST;
+                raceService.getRace(Integer.valueOf(request.getParameter("id"))) : new Race();
+        if (race.getId() != null) {
+            List<Rate> rates = (race.getId() != null) ? rateService.getRatesForRace(race.getId()) : Collections.EMPTY_LIST;
+            request.setAttribute("rates", rates);
+        } else {
+            User user = (User) request.getSession().getAttribute("user");
+            Set<Rate> rates = user.getRates();
+            request.setAttribute("rates", rates);
+            race.setRace("Ставки пользователя");
+        }
         request.setAttribute("race", race);
-        request.setAttribute("rates", rates);
         request.getRequestDispatcher("WEB-INF/jsp/modify-race.jsp").forward(request, response);
     }
 
     protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String message;
-        Integer id = request.getParameter("id") !=null ? Integer.valueOf(request.getParameter("id")) : null;
-        Rate rate =  id!= null ? rateService.getRate(id) : null;
+        Integer id = request.getParameter("id") != null ? Integer.valueOf(request.getParameter("id")) : null;
+        Rate rate = (id != null) ? rateService.getRate(id) : null;
         if (rate != null && rate.getRateResult().getId() == 1) {
             User user = (User) request.getSession().getAttribute("user");
             userRateService.replaceUserRate(user, rate);
@@ -76,6 +84,6 @@ public class PlaceRate extends HttpServlet {
             message = String.format("Невозможно удалить сыгранную ставку %s", id);
         }
         request.getSession().setAttribute("message", message);
-        response.sendRedirect("/view-race");
+        response.sendRedirect(request.getContextPath() + "/view-race");
     }
 }

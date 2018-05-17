@@ -8,7 +8,6 @@ import java.io.IOException;
 
 public class MessageFilter implements Filter {
 
-
     @Override
     public void init(FilterConfig filterConfig) {
     }

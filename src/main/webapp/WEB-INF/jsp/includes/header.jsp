@@ -13,7 +13,8 @@
         </form>
     </div>
     <div>
-        <a class="user-form" href="${shoppingcart}"> Cart ${countUserRates}</a>
+        <c:url var="userRates" value="/place-rate"/>
+        <a class="user-form" href="${userRates}"> Cart ${countUserRates}</a>
     </div>
 </c:if>
 <c:if test="${user == null}">

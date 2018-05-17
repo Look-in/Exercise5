@@ -42,11 +42,11 @@ public class ModifyRace extends HttpServlet {
         String message;
         if (race.getId() == null || rateService.isAllNewRates(race.getId())) {
             raceService.pushRace(race);
-            message = String.format("Ставка %s сохранена", race.getId());
+            message = String.format("Забег %s сохранён", race.getId());
         } else {
-            message = String.format("Невозможно сохранить ставку %s. В забеге есть сыгранные ставки", race.getId());
+            message = String.format("Невозможно сохранить забег %s. В забеге есть сыгранные ставки", race.getId());
         }
-        request.getSession().setAttribute("message",message);
+        request.getSession().setAttribute("message", message);
         response.sendRedirect(request.getContextPath() + "/view-race");
     }
 
@@ -65,15 +65,15 @@ public class ModifyRace extends HttpServlet {
         String message = null;
         if (request.getParameter("id") != null) {
             int id = Integer.valueOf(request.getParameter("id"));
-            if (rateService.isAllNewRates(id)) {
+            if (!rateService.hasRates(id)) {
                 raceService.deleteRace(id);
                 message = String.format("Забег %s успешно удален", id);
             } else {
-                message = String.format("Невозможно удалить забег %s с сыгранными ставками", id);
+                message = String.format("Невозможно удалить забег %s со ставками", id);
             }
         }
-        request.getSession().setAttribute("message",message);
-        response.sendRedirect("/view-race");
+        request.getSession().setAttribute("message", message);
+        response.sendRedirect(request.getContextPath() + "/view-race");
     }
 
 }

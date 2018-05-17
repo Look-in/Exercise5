@@ -10,7 +10,7 @@ public class UserRoleJdbcDao extends BaseJdbcDao implements UserRoleDao {
 
     @Override
     public Role getRole(int roleId) {
-        return  find(Role.class, roleId);
+        return find(Role.class, roleId);
     }
 
     @Override

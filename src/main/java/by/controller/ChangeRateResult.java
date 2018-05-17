@@ -33,10 +33,10 @@ public class ChangeRateResult extends HttpServlet {
         if (raceResult != null && rate != null) {
             rate.setRateResult(referenceService.getRateResult(raceResult));
             rateService.pushRate(rate);
-            message = String.format("Результат ставки '%s' изменен на '%s'", rate.getRate(),rate.getRateResult().getRateResult());
+            message = String.format("Результат ставки '%s' изменен на '%s'", rate.getRate(), rate.getRateResult().getRateResult());
         }
         request.getSession().setAttribute("message", message);
-        response.sendRedirect("/modify-race?id=" + raceId);
+        response.sendRedirect(request.getContextPath() + "/modify-race?id=" + raceId);
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) {

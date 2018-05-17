@@ -65,13 +65,12 @@ insert into roles values(1,'bookmaker');
 insert into roles values(2,'administrator');
 insert into roles values(3,'client');
 
-insert into race(race) values('Забег мечты');
-insert into race(race) values('Звездный забег');
-
-insert into rate_result values(1,'Будет играть');
-insert into rate_result values(2,'Ставка сыграла');
-insert into rate_result values(3,'Ставка не сыграла');
-
-insert into rate(race_id,rate, result_id) values(1,'Каштанка 3 к 1',1);
-
 insert into users(username, password, role_id) values('user','user',3);
+insert into users(username, password, role_id) values('user1','user1',3);
+insert into users(username, password, role_id) values('administrator','administrator',2);
+insert into users(username, password, role_id) values('bookmaker','bookmaker',1);
+
+insert into rate_result values(1,'Новая ставка');
+insert into rate_result values(2,'Будет играть');
+insert into rate_result values(3,'Ставка сыграла');
+insert into rate_result values(4,'Ставка не сыграла');

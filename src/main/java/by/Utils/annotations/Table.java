@@ -7,7 +7,7 @@ import java.lang.annotation.Target;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 @Target(ElementType.TYPE)
-@Retention(value=RUNTIME)
+@Retention(value = RUNTIME)
 public @interface Table {
 
     String name();

@@ -60,7 +60,7 @@ ${message}<br>
             </c:url>
             <a class="item edit" ${elem.rateResult.id == 1 and user.role.role == 'bookmaker' ? '' : 'hidden="true"' } href="${editurl}"><fmt:message
                     key="button.edit"/></a>
-            <div class="item delete" ${user.role.role == 'administrator' or elem.rateResult.id == 1 ? '' : 'hidden="true"' } >
+            <div class="item delete" ${race.id != null and (user.role.role == 'administrator' or elem.rateResult.id == 1) ? '' : 'hidden="true"' } >
                 <c:choose>
                     <c:when test="${user.role.role == 'administrator'}">
                     <form action="change-rateResult" method="POST">

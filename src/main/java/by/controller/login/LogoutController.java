@@ -13,14 +13,14 @@ import java.io.IOException;
 public class LogoutController extends javax.servlet.http.HttpServlet {
 
     private void logout(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        HttpSession session=request.getSession();
+        HttpSession session = request.getSession();
         session.invalidate();
-        response.sendRedirect("/view-race");
+        response.sendRedirect(request.getContextPath() + "/view-race");
     }
 
-     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         logout(request, response);
-     }
+    }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         logout(request, response);

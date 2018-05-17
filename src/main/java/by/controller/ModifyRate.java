@@ -35,8 +35,8 @@ public class ModifyRate extends HttpServlet {
         } else {
             message = String.format("Невозможно сохранить ставку %s. В забеге есть сыгранные ставки", rate.getId());
         }
-        request.getSession().setAttribute("message",message);
-        response.sendRedirect("/modify-race?id=" + rate.getRace().getId());
+        request.getSession().setAttribute("message", message);
+        response.sendRedirect(request.getContextPath() + "/modify-race?id=" + rate.getRace().getId());
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -50,7 +50,7 @@ public class ModifyRate extends HttpServlet {
 
     protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String message = null;
-        if (request.getParameter("id") != null ) {
+        if (request.getParameter("id") != null) {
             int id = Integer.valueOf(request.getParameter("id"));
             if (rateService.getRateResultOfRate(id) == 1) {
                 rateService.deleteRate(id);
@@ -59,11 +59,11 @@ public class ModifyRate extends HttpServlet {
                 message = String.format("Невозможно удалить ставку %s. Статус не 'Новая ставка'", id);
             }
         }
-        request.getSession().setAttribute("message",message);
+        request.getSession().setAttribute("message", message);
         if (request.getParameter("raceId") != null) {
-            response.sendRedirect("/modify-race?id=" + request.getParameter("raceId"));
+            response.sendRedirect(request.getContextPath() + "/modify-race?id=" + request.getParameter("raceId"));
         } else {
-            response.sendRedirect("/view-race");
+            response.sendRedirect(request.getContextPath() + "/view-race");
         }
     }
 
