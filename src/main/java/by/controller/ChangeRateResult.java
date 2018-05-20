@@ -11,6 +11,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+/**
+ * Сервлет для модификации результата ставки
+ *
+ * @author Serg Shankunas
+ */
 @WebServlet(
         name = "modify rate.rateResult servlet",
         description = "Сервлет для модификации результата ставки",

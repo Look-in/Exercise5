@@ -7,6 +7,11 @@ import lombok.Data;
 
 import java.io.Serializable;
 
+/**
+ * Базовая сущность c Id .
+ *
+ * @author Serg Shankunas <shserg2012@gmail.com>
+ */
 @Data
 class DefaultEntity implements Serializable {
 

@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
  *
  * <p> Этот класс на основе рефлексии считывает поля сущности
  * и генерирует SQL запрос. Также в качестве параметра методы
- * find могут также принимать SQL запрос для дальнейшей обработки
+ * find могут принимать SQL запрос для дальнейшей обработки.
  * </>
  *
  * @author Serg Shankunas <shserg2012@gmail.com>
@@ -37,7 +37,7 @@ public class BaseEntityReader {
     private BaseConnectionKeeper baseConnectionKeeper;
 
     /**
-     * Карты для хранения сгенерированных SQL запросов
+     * Карты для хранения сгенерированных SQL запросов.
      */
     private Map<Class<?>, String> classQueriesById = new ConcurrentHashMap<>();
 
@@ -88,7 +88,7 @@ public class BaseEntityReader {
     }
 
     /**
-     * Метод для выборки из БД элементов, связанных с таблицей сущности по принципу OneToMany
+     * Метод для выборки из БД элементов, связанных с таблицей сущности по принципу OneToMany.
      *
      * @param sql - SQL запрос
      * @param id  - Id сущности
@@ -125,7 +125,7 @@ public class BaseEntityReader {
     }
 
     /**
-     * Метод возвращает элемент класса Class<T> по идентификатору, используя параметр - SQL запрос
+     * Метод возвращает элемент класса Class<T> по идентификатору, используя параметр - SQL запрос.
      *
      * @param sql строка запроса
      * @param id  идентификатор сущности
@@ -152,7 +152,7 @@ public class BaseEntityReader {
     }
 
     /**
-     * Метод возвращает элемент класса Class<T> по идентификатору, генерируя SQL запрос
+     * Метод возвращает элемент класса Class<T> по идентификатору, генерируя SQL запрос.
      *
      * @param id идентификатор сущности
      * @return элемент класса-аргумента
@@ -165,7 +165,7 @@ public class BaseEntityReader {
 
     /**
      * Метод возвращает спсок элементов класса Class<T> по идентификатору,
-     * используя параметр - SQL запрос
+     * используя параметр - SQL запрос.
      *
      * @param sql строка запроса
      * @return список элементов класса-аргумента
@@ -192,7 +192,7 @@ public class BaseEntityReader {
     }
 
     /**
-     * Метод генерирует строку SQL запроса из класса-сущности, используя рефлексию
+     * Метод генерирует строку SQL запроса из класса-сущности, используя рефлексию.
      *
      * @param tClass     класс для генерации запроса
      * @param requiredId требуется Id
@@ -241,7 +241,7 @@ public class BaseEntityReader {
     }
 
     /**
-     * Метод заполняет поля класса, помеченные аннотиацией FetchType
+     * Метод заполняет поля класса, помеченные аннотиацией FetchType.
      *
      * @param field  поле класса, аннотированное FetchType
      * @param tClass класс сущности
@@ -265,7 +265,7 @@ public class BaseEntityReader {
     }
 
     /**
-     * Метод выполнеят поиск полей, аннотированных FetchType.Eager и заполняет поля из БД
+     * Метод выполнеят поиск полей, аннотированных FetchType.Eager и заполняет поля из БД.
      *
      * @param tClass - класс сущности
      * @param object - объект сущности
@@ -279,11 +279,10 @@ public class BaseEntityReader {
     }
 
     /**
-     * Метод получает ResultSet, класс и коннект, используя рефлексию заполняет поля из ResultSet
+     * Метод получает ResultSet, класс и коннект, используя рефлексию заполняет поля из ResultSet.
      *
-     * @param rs         ResultSet
-     * @param tClass     класс сущности
-     * @param connection коннект
+     * @param rs     ResultSet
+     * @param tClass класс сущности
      * @return прокси объект сущности
      */
     private <T> T getEntityResultSet(ResultSet rs, Class<T> tClass) {

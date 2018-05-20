@@ -6,6 +6,12 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
+/**
+ * Фильтр вытягивает переданные в сессию сообщения и передает
+ * в request.
+ *
+ * @author Serg Shankunas
+ */
 public class MessageFilter implements Filter {
 
     @Override

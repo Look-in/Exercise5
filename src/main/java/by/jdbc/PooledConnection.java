@@ -6,6 +6,12 @@ import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
 
+/**
+ * Класс переопределяет метод close для Connection и хранит
+ * карту PreparedStatement.
+ *
+ * @author Serg Shankunas <shserg2012@gmail.com>
+ */
 class PooledConnection implements Connection {
 
     private ConnectionPool connectionPool;

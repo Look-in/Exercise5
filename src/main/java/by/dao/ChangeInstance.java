@@ -1,7 +1,7 @@
 package by.dao;
 
 /**
- * <code>DAO</code> For change instances<br>
+ * <code>DAO</code> Для изменения сущностей<br>
  *
  * @author Serg Shankunas
  */

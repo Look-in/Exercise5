@@ -7,6 +7,11 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.List;
 
+/**
+ * Утилиты на основе Reflection API для работы с HttpRequest.
+ *
+ * @author Serg Shankunas
+ */
 @Slf4j
 public class HttpServletRequestReflectionUtils {
 
@@ -44,12 +49,9 @@ public class HttpServletRequestReflectionUtils {
         List<Field> fields = ReflectionUtils.getAllClassFields(clazz);
         Object fieldObject;
         for (Field field : fields) {
-            if ((field.getModifiers() & Modifier.FINAL) == Modifier.FINAL) {
-                continue;
-            }
+            if ((field.getModifiers() & Modifier.FINAL) == Modifier.FINAL) continue;
             try {
                 if (ReflectionUtils.isPrimitiveOrWrapperType(field.getType())) {
-                    ;
                     String reqParam = parentClassType == null ? field.getName() : parentClassType.concat(field.getName());
                     fieldObject = getValueFromHttpServletRequest(request.getParameter(reqParam), field.getType());
                 } else {

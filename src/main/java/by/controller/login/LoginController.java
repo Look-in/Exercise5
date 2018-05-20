@@ -12,6 +12,12 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Сервлет для авторизации пользователя. При успешном
+ * логине переадресует на список забегов.
+ *
+ * @author Serg Shankunas
+ */
 @WebServlet(
         name = "loginForm",
         description = "Сервлет для авторизации",

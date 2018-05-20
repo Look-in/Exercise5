@@ -6,6 +6,11 @@ import by.Utils.annotations.ManyToOne;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+/**
+ * Сущность ставка.
+ *
+ * @author Serg Shankunas <shserg2012@gmail.com>
+ */
 @Data
 @Entity
 @EqualsAndHashCode(callSuper = true)

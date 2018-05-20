@@ -14,6 +14,11 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 
+/**
+ * Сервлет для передачи списка забегов.
+ *
+ * @author Serg Shankunas
+ */
 @WebServlet(
         name = "ViewRace",
         description = "Сервлет для передачи списка забегов",
@@ -28,7 +33,7 @@ public class ViewRace extends HttpServlet {
         List<Race> races = raceDao.getRaces();
         String sortingBy = request.getParameter("sortingBy");
         if (sortingBy != null && !sortingBy.equals("")) {
-            RaceSortUtil.compare(races, AttributeToCompare.valueOf(request.getParameter("sortingBy")));
+            RaceSortUtil.compare(races, AttributeToCompare.valueOf(sortingBy));
         }
         request.setAttribute("race", races);
         request.getRequestDispatcher("WEB-INF/jsp/view-race.jsp").forward(request, response);

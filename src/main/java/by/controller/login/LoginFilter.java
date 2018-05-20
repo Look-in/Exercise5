@@ -12,6 +12,11 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * Security фильтр для проверки доступа к контенту
+ *
+ * @author Serg Shankunas
+ */
 @WebFilter("/*")
 public class LoginFilter implements Filter {
 
@@ -36,17 +41,11 @@ public class LoginFilter implements Filter {
 
     private String validateRedirectAccessURI(HttpServletRequest request, HttpSession session) {
         String[] pageAccessRoles = getURIAccessRoles(request.getRequestURI());
-        if (pageAccessRoles == null) {
-            return null;
-        }
+        if (pageAccessRoles == null) return null;
         User user = getSessionUser(session);
-        if (user == null) {
-            return request.getContextPath() + "/loginForm";
-        }
-        if (Arrays.asList(pageAccessRoles).contains(user.getRole().getRole())) {
-            return null;
-        }
-        return request.getContextPath() + "/AccessDenied";
+        return (user == null) ? request.getContextPath() + "/loginForm" :
+                (Arrays.asList(pageAccessRoles).contains(user.getRole().getRole())) ? null :
+                        request.getContextPath() + "/AccessDenied";
     }
 
     @Override

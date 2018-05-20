@@ -14,6 +14,16 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Базовый класс для создания сущностей в БД, используя JDBC
+ *
+ * <p> Этот класс на основе рефлексии считывает поля сущности
+ * и генерирует SQL запрос. Также в качестве параметра метод
+ * insert может принимать SQL запрос для дальнейшей обработки.
+ * </>
+ *
+ * @author Serg Shankunas <shserg2012@gmail.com>
+ */
 @Slf4j
 public class BaseEntityCreator extends BaseEntityDeleter {
 
@@ -21,6 +31,13 @@ public class BaseEntityCreator extends BaseEntityDeleter {
         return getBaseConnectionKeeper().getConnection().prepareStatement(sql);
     }
 
+    /**
+     * Принимает в аргументах класс сущности и сущность, по сформированному
+     * SQL производит вставку в БД.
+     *
+     * @param tClass класс сущности
+     * @param entity сущность
+     */
     protected <T> void persist(Class<T> tClass, T entity) {
         try (PreparedStatement statement = createPreparedStatement(sqlGeneration(tClass, entity))) {
             statement.executeUpdate();
@@ -46,6 +63,13 @@ public class BaseEntityCreator extends BaseEntityDeleter {
         }
     }
 
+    /**
+     * Генерирует SQL запрос вида insert into ? values ?.
+     *
+     * @param tClass класс сущности
+     * @param entity сущность
+     * @return строку SQL запроса
+     */
     private <T> String sqlGeneration(Class<T> tClass, T entity) {
         Table table = tClass.getAnnotation(Table.class);
         String tableName = (table != null ? table.name() : tClass.getSimpleName());
@@ -65,7 +89,15 @@ public class BaseEntityCreator extends BaseEntityDeleter {
         return sql;
     }
 
-
+    /**
+     * Метод создает карту полей сущности с зависимостью
+     * имя поля - значение.
+     *
+     * @param tClass класс сущности
+     * @param object сущность
+     * @param getId  флаг - требуется ли заполнять ID поле сущности
+     * @return карту fields name-value
+     */
     @SuppressWarnings("unchecked")
     private <T> Map<String, Object> getEntityFields(Class<T> tClass, T object, boolean getId) {
         Map<String, Object> fieldsAndValues = new HashMap<>();

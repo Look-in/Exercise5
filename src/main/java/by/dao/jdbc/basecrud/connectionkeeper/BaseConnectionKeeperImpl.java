@@ -9,6 +9,12 @@ import javax.inject.Inject;
 import java.sql.Connection;
 import java.sql.SQLException;
 
+/**
+ * Класс для хранения коннекта, взятого из пула соединений
+ * при каждом запросе.
+ *
+ * @author Serg Shankunas <shserg2012@gmail.com>
+ */
 @RequestScoped
 class BaseConnectionKeeperImpl implements BaseConnectionKeeper {
 

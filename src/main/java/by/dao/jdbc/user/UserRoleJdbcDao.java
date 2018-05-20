@@ -6,6 +6,11 @@ import by.entity.Role;
 
 import java.util.List;
 
+/**
+ * Реализация {@link UserRoleDao}.
+ *
+ * @author Serg Shankunas <shserg2012@gmail.com>
+ */
 public class UserRoleJdbcDao extends BaseJdbcDao implements UserRoleDao {
 
     @Override

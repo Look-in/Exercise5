@@ -9,6 +9,11 @@ import javax.inject.Inject;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Реализация {@link RateService}.
+ *
+ * @author Serg Shankunas <shserg2012@gmail.com>
+ */
 public class RateServiceImpl implements RateService {
 
     @Inject

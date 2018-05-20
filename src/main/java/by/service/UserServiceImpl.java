@@ -8,6 +8,11 @@ import by.entity.User;
 import javax.inject.Inject;
 import java.util.List;
 
+/**
+ * Реализация {@link UserService}.
+ *
+ * @author Serg Shankunas <shserg2012@gmail.com>
+ */
 public class UserServiceImpl implements UserService {
 
     @Inject
@@ -30,10 +35,8 @@ public class UserServiceImpl implements UserService {
     @Override
     public User checkPasswordAndGetUser(String userName, String password) {
         User user = userDao.getUser(userName);
-        if (user != null && user.getPassword().equals(password)) {
-            return user;
-        }
-        return null;
+        return (user != null && user.getPassword().equals(password)) ? user :
+                null;
     }
 
     @Override

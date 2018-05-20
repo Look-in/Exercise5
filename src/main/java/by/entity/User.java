@@ -7,13 +7,18 @@ import lombok.EqualsAndHashCode;
 
 import java.util.Set;
 
+/**
+ * Сущность пользователь.
+ *
+ * @author Serg Shankunas <shserg2012@gmail.com>
+ */
 @Data
 @Entity
 @EqualsAndHashCode(callSuper = true)
 @Table(name = "users")
 public class User extends DefaultEntity {
 
-    //@Column(name = "username", updatable = false)
+    @Column(name = "username", updatable = false)
     private String userName;
 
     @ManyToOne

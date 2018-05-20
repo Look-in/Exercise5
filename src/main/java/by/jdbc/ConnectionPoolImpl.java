@@ -10,6 +10,11 @@ import java.util.Properties;
 import java.util.Queue;
 import java.util.concurrent.LinkedBlockingQueue;
 
+/**
+ * Реализация {@link ConnectionPool}.
+ *
+ * @author Serg Shankunas <shserg2012@gmail.com>
+ */
 @ApplicationScoped
 public class ConnectionPoolImpl implements ConnectionPool {
 
@@ -17,14 +22,12 @@ public class ConnectionPoolImpl implements ConnectionPool {
 
     private Queue<Connection> connections = new LinkedBlockingQueue<>();
 
-    private ConnectionPoolImpl() {
+    public ConnectionPoolImpl() {
         String driver = getProperties().getProperty("db.driver");
         String url = getProperties().getProperty("db.url");
         int countConnections = Integer.valueOf(getProperties().getProperty("db.poolsize"));
         try {
-            if (driver != null) {
-                Class.forName(driver);
-            }
+            Class.forName(driver);
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(String.format("Can't register db.driver %s: ", driver) + e);
         }

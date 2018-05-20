@@ -6,6 +6,11 @@ import by.entity.Race;
 
 import java.util.List;
 
+/**
+ * Реализация {@link RaceDao}.
+ *
+ * @author Serg Shankunas <shserg2012@gmail.com>
+ */
 public class RaceJdbcDao extends BaseJdbcDao implements RaceDao {
 
     @Override

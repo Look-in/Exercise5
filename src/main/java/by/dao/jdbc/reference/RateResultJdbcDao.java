@@ -6,6 +6,11 @@ import by.entity.RateResult;
 
 import java.util.List;
 
+/**
+ * Реализация {@link RateResultDao}.
+ *
+ * @author Serg Shankunas <shserg2012@gmail.com>
+ */
 public class RateResultJdbcDao extends BaseJdbcDao implements RateResultDao {
 
     @Override

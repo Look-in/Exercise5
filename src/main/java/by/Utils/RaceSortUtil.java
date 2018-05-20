@@ -5,6 +5,11 @@ import by.service.reference.AttributeToCompare;
 
 import java.util.List;
 
+/**
+ * Класс для сортировки списка забегов.
+ *
+ * @author Serg Shankunas
+ */
 public class RaceSortUtil {
 
     public static void compare(List<Race> races, AttributeToCompare sortBy) {

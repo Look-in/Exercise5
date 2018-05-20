@@ -7,6 +7,11 @@ import java.net.URL;
 import java.sql.*;
 import java.util.Calendar;
 
+/**
+ * Класс переопределяет метод close для PreparedStatement.
+ *
+ * @author Serg Shankunas <shserg2012@gmail.com>
+ */
 class CashStatement implements PreparedStatement {
 
     private PreparedStatement statement;
@@ -17,7 +22,6 @@ class CashStatement implements PreparedStatement {
 
     @Override
     public void close() {
-        return;
     }
 
     @Override

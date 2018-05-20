@@ -4,6 +4,11 @@ import by.entity.Rate;
 
 import java.util.List;
 
+/**
+ * Интерфейс для работы со ставками.
+ *
+ * @author Serg Shankunas <shserg2012@gmail.com>
+ */
 public interface RateService {
 
     List<Rate> getRates();

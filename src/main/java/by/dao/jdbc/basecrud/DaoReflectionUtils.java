@@ -14,13 +14,11 @@ import java.sql.SQLException;
 import java.util.List;
 
 /**
- * Invoking methods of classes that extends Item with attributes
- * from controller.request.getParameters
- * Can use Commons BeanUtils instead this.
+ * Утилиты на основе Reflection API.
  *
  * @author Serg Shankunas
  */
-public class DaoReflectionUtils {
+class DaoReflectionUtils {
 
     private DaoReflectionUtils() {
     }
@@ -69,15 +67,14 @@ public class DaoReflectionUtils {
     }
 
     static <T> void setValueOfId(T object, Object value) {
-        for (Field field : ReflectionUtils.getAllClassFields(object.getClass())) {
-            if (field.getAnnotation(Id.class) != null) {
-                try {
-                    field.setAccessible(true);
-                    field.set(object, value);
-                } catch (IllegalAccessException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
+        ReflectionUtils.getAllClassFields(object.getClass()).stream().filter(e -> e.getAnnotation(Id.class) != null).forEach(
+                (e -> {
+                    e.setAccessible(true);
+                    try {
+                        e.set(object, value);
+                    } catch (IllegalAccessException el) {
+                        throw new RuntimeException("Can't access to field " + el);
+                    }
+                }));
     }
 }

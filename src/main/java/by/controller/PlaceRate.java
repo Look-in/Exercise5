@@ -18,11 +18,15 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * Сервлет для добавления ставки в польз корзину.
+ *
+ * @author Serg Shankunas
+ */
 @WebServlet(
         name = "Place rate servlet",
         description = "Сервлет для добавления ставки в польз корзину",
         urlPatterns = "/place-rate")
-
 public class PlaceRate extends HttpServlet {
 
     @Inject

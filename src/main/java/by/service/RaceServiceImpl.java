@@ -6,6 +6,11 @@ import by.entity.Race;
 import javax.inject.Inject;
 import java.util.List;
 
+/**
+ * Реализация {@link RaceService}.
+ *
+ * @author Serg Shankunas <shserg2012@gmail.com>
+ */
 public class RaceServiceImpl implements RaceService {
 
     @Inject

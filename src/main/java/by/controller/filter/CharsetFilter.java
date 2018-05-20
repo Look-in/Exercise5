@@ -3,6 +3,11 @@ package by.controller.filter;
 import javax.servlet.*;
 import java.io.IOException;
 
+/**
+ * Фильтр для кодировки в UTF-8
+ *
+ * @author Serg Shankunas
+ */
 public class CharsetFilter implements Filter {
 
     private String encoding;

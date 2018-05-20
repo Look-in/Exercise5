@@ -7,6 +7,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * Утилиты на основе Reflection API.
+ *
+ * @author Serg Shankunas
+ */
 @Slf4j
 public class ReflectionUtils {
 

@@ -5,12 +5,21 @@ import by.Utils.annotations.*;
 import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.Field;
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Set;
 
+/**
+ * Базовый класс для модификации сущностей в БД, используя JDBC
+ *
+ * <p> Этот класс на основе рефлексии считывает поля сущности
+ * и генерирует SQL запрос. Также в качестве параметра метод
+ * update может принимать SQL запрос для дальнейшей обработки.
+ * </>
+ *
+ * @author Serg Shankunas <shserg2012@gmail.com>
+ */
 @Slf4j
 public class BaseEntityUpdater extends BaseEntityCreator {
 
@@ -20,6 +29,13 @@ public class BaseEntityUpdater extends BaseEntityCreator {
         return statement;
     }
 
+    /**
+     * Метод принимает SQL запрос и обращается к БД.
+     *
+     * @param sql    строка запроса
+     * @param tClass класс сущности
+     * @param entity сущность
+     */
     private <T> void update(String sql, Class<T> tClass, T entity) {
         if (tClass.getAnnotation(Entity.class) == null || sql == null) return;
         try (PreparedStatement statement = updatePreparedStatement(sql, entity)) {
@@ -35,6 +51,13 @@ public class BaseEntityUpdater extends BaseEntityCreator {
         update(sqlGeneration(tClass, entity), tClass, entity);
     }
 
+    /**
+     * Метод генерирует строку SQL запроса.
+     *
+     * @param tClass
+     * @param entity
+     * @return строку SQL
+     */
     private <T> String sqlGeneration(Class<T> tClass, T entity) {
         String fields = getEntityFields(tClass, entity, false);
         if ("".equals(fields)) return null;
@@ -45,10 +68,13 @@ public class BaseEntityUpdater extends BaseEntityCreator {
         return sql;
     }
 
-    private <T> void updateByConnection(String sql, T entity, Connection connection) {
-
-    }
-
+    /**
+     * Метод изменяет в БД коллекции.
+     *
+     * @param field поле коллекции
+     * @param id    идентификатор сущности
+     * @param value значение сущности
+     */
     @SuppressWarnings("unchecked")
     private void updateOneToManyField(Field field, Object id, Object value) {
         JoinTable joinTable = field.getAnnotation(JoinTable.class);
@@ -62,6 +88,14 @@ public class BaseEntityUpdater extends BaseEntityCreator {
         });
     }
 
+    /**
+     * Метод создает строку с перечислением полей для дальнейшей генерации SQL.
+     *
+     * @param tClass класс сущности
+     * @param object сущность
+     * @param getId  флаг - требуется ли Id
+     * @return строку (?,?...)
+     */
     @SuppressWarnings("unchecked")
     private <T> String getEntityFields(Class<T> tClass, T object, boolean getId) {
         StringBuilder fieldNameAndValue = new StringBuilder();

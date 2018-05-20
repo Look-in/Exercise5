@@ -6,6 +6,11 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
+/**
+ * Logout сервлет
+ *
+ * @author Serg Shankunas
+ */
 @WebServlet(
         name = "logoutForm",
         description = "Сервлет для авторизации",

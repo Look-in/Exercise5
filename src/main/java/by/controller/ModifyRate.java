@@ -12,6 +12,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+/**
+ * Сервлет для отображения страницы модификации rate.
+ *
+ * @author Serg Shankunas
+ */
 @WebServlet(
         name = "modify rate servlet",
         description = "Сервлет для отображения страницы модификации rate",

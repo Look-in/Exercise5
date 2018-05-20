@@ -4,6 +4,11 @@ import by.dao.UserDao;
 import by.dao.jdbc.BaseJdbcDao;
 import by.entity.User;
 
+/**
+ * Реализация {@link UserDao}.
+ *
+ * @author Serg Shankunas <shserg2012@gmail.com>
+ */
 public class UserJdbcDao extends BaseJdbcDao implements UserDao {
 
     @Override
@@ -20,7 +25,6 @@ public class UserJdbcDao extends BaseJdbcDao implements UserDao {
     @Override
     public void update(User entity) {
         merge(User.class, entity);
-        System.out.println(entity.toString());
     }
 
     @Override

@@ -6,6 +6,11 @@ import by.entity.User;
 
 import javax.inject.Inject;
 
+/**
+ * Реализация {@link UserRateService}.
+ *
+ * @author Serg Shankunas <shserg2012@gmail.com>
+ */
 public class UserRateServiceImpl implements UserRateService {
 
     @Inject

@@ -17,6 +17,11 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * Сервлет для отображения страницы модификации race.
+ *
+ * @author Serg Shankunas
+ */
 @WebServlet(
         name = "modify race servlet",
         description = "Сервлет для отображения страницы модификации race",

@@ -1,7 +1,7 @@
 package by.service.reference;
 
 /**
- * Attributes for sorting List of Races.
+ * Список атрибутов для сортировки List of Races.
  *
  * @author Serg Shankunas <shserg2012@gmail.com>
  */

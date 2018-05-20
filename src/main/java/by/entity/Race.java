@@ -4,6 +4,11 @@ import by.Utils.annotations.Entity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+/**
+ * Сущность забег.
+ *
+ * @author Serg Shankunas <shserg2012@gmail.com>
+ */
 @Data
 @Entity
 @EqualsAndHashCode(callSuper = true)

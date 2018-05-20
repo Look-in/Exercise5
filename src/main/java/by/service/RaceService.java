@@ -4,6 +4,11 @@ import by.entity.Race;
 
 import java.util.List;
 
+/**
+ * Интерфейс для работы с забегами.
+ *
+ * @author Serg Shankunas <shserg2012@gmail.com>
+ */
 public interface RaceService {
 
     List<Race> getRaces();

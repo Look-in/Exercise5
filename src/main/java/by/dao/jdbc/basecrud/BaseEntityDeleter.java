@@ -8,6 +8,16 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
+/**
+ * Базовый класс для удаления сущностей из БД, используя JDBC
+ *
+ * <p> Этот класс на основе рефлексии считывает поле Table сущности
+ * и генерирует SQL запрос. Также в качестве параметра метод
+ * delete может принимать SQL запрос для дальнейшей обработки.
+ * </>
+ *
+ * @author Serg Shankunas <shserg2012@gmail.com>
+ */
 @Slf4j
 public class BaseEntityDeleter extends BaseEntityReader {
 
@@ -17,6 +27,12 @@ public class BaseEntityDeleter extends BaseEntityReader {
         return statement;
     }
 
+    /**
+     * Метод удаляет сущность из БД.
+     *
+     * @param sql
+     * @param id  идентификатор сущности
+     */
     void delete(String sql, Object id) {
         try (PreparedStatement statement = deletePreparedStatement(sql, getBaseConnectionKeeper().getConnection(), id)) {
             statement.executeUpdate();
@@ -32,6 +48,12 @@ public class BaseEntityDeleter extends BaseEntityReader {
         delete(sqlGeneration(tClass), id);
     }
 
+    /**
+     * Метод генерирует SQL запрос.
+     *
+     * @param tClass - класс сущности
+     * @return строку SQL запроса
+     */
     private <T> String sqlGeneration(Class<T> tClass) {
         Table table = tClass.getAnnotation(Table.class);
         String tableName = (table != null ? table.name() : tClass.getSimpleName());
