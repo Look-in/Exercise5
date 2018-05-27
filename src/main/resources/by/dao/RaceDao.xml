@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="by.dao.RaceDao">
+
+    <select id="getRaces" resultType="by.entity.Race">
+        select id, race from race
+    </select>
+
+    <select id="getRace" resultType="by.entity.Race">
+        select * from race where id = #{id}
+    </select>
+
+</mapper>

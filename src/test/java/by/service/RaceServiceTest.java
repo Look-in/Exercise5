@@ -1,15 +1,12 @@
 package by.service;
 
-import by.entity.Race;
 import by.entity.Rate;
 import by.entity.RateResult;
 import by.entity.User;
-import org.jboss.weld.environment.se.Weld;
-import org.jboss.weld.environment.se.WeldContainer;
 
 public class RaceServiceTest {
 
-   private Weld weld;
+/*   private Weld weld;
 
     private RaceService raceService;
 
@@ -43,11 +40,11 @@ public class RaceServiceTest {
         }
        /* float delta = (float)(System.currentTimeMillis() - timeJsp)/1000;
         System.out.println(delta);*/
-        Rate rate = rateService.getRate(4);
+      /*  Rate rate = rateService.getRate(4);
         user.getRates().clear();
         System.out.println(user.getRates());
         userRateService.placeUserRate(user, rate);
-        System.out.println(user.toString());
+        System.out.println(user.toString());*/
      /*   if (user1 !=null)
         System.out.println(user1.toString());
         if (user2 !=null)
@@ -72,7 +69,7 @@ public class RaceServiceTest {
         //rate.setFoo(20);
         rateService.pushRate(rate);
         System.out.println(rate.getId());*/
-    }
+  /*  }
 
     private void shutdown() {
         weld.shutdown();
@@ -83,5 +80,5 @@ public class RaceServiceTest {
         raceServiceTest.init();
         raceServiceTest.start();
         raceServiceTest.shutdown();
-    }
+    }*/
 }

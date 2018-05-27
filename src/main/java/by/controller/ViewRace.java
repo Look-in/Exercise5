@@ -1,50 +1,55 @@
 package by.controller;
 
 import by.Utils.RaceSortUtil;
-import by.dao.RaceDao;
 import by.entity.Race;
+import by.service.RaceService;
 import by.service.reference.AttributeToCompare;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
-import javax.inject.Inject;
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.util.List;
 
 /**
- * Сервлет для передачи списка забегов.
+ * Контроллер для передачи списка забегов.
  *
  * @author Serg Shankunas
  */
-@WebServlet(
-        name = "ViewRace",
-        description = "Сервлет для передачи списка забегов",
-        urlPatterns = "/view-race")
+@Controller
+@RequestMapping("/view-race")
 public class ViewRace extends HttpServlet {
 
-    @Inject
-    private RaceDao raceDao;
+    private RaceService raceService;
 
-    private void doRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        request.setAttribute("sortBy", AttributeToCompare.values());
-        List<Race> races = raceDao.getRaces();
-        String sortingBy = request.getParameter("sortingBy");
-        if (sortingBy != null && !sortingBy.equals("")) {
-            RaceSortUtil.compare(races, AttributeToCompare.valueOf(sortingBy));
+    @Autowired
+    public ViewRace(RaceService raceService) {
+        this.raceService = raceService;
+    }
+
+    @ModelAttribute(value = "races")
+    public List<Race> newRequest(@RequestParam(required = false) AttributeToCompare sortingBy) {
+        List<Race> races = raceService.getRaces();
+        if (sortingBy != null) {
+            RaceSortUtil.compare(races,sortingBy);
         }
-        request.setAttribute("race", races);
-        request.getRequestDispatcher("WEB-INF/jsp/view-race.jsp").forward(request, response);
+        return races;
     }
 
-    protected void doPost(javax.servlet.http.HttpServletRequest request, javax.servlet.http.HttpServletResponse response) throws javax.servlet.ServletException, IOException {
-        doRequest(request, response);
+    @ModelAttribute(value = "sortBy")
+    public AttributeToCompare[] newRequestAttr() {
+        return AttributeToCompare.values();
     }
 
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws javax.servlet.ServletException, IOException {
-        doRequest(request, response);
+    @RequestMapping(method = RequestMethod.GET)
+    public void doGet() {
+    }
+
+    @RequestMapping(method = RequestMethod.POST)
+    public void doPost() {
     }
 
 }

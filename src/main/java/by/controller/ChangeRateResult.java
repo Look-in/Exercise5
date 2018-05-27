@@ -3,8 +3,8 @@ package by.controller;
 import by.entity.Rate;
 import by.service.RateService;
 import by.service.reference.ReferenceService;
+import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.inject.Inject;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -23,11 +23,15 @@ import java.io.IOException;
 
 public class ChangeRateResult extends HttpServlet {
 
-    @Inject
     private RateService rateService;
 
-    @Inject
     private ReferenceService referenceService;
+
+    @Autowired
+    public ChangeRateResult(RateService rateService, ReferenceService referenceService) {
+        this.rateService = rateService;
+        this.referenceService = referenceService;
+    }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         Integer raceId = request.getParameter("raceId") != null ? Integer.valueOf(request.getParameter("raceId")) : null;

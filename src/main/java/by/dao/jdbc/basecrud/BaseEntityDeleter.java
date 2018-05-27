@@ -34,7 +34,7 @@ public class BaseEntityDeleter extends BaseEntityReader {
      * @param id  идентификатор сущности
      */
     void delete(String sql, Object id) {
-        try (PreparedStatement statement = deletePreparedStatement(sql, getBaseConnectionKeeper().getConnection(), id)) {
+        try (PreparedStatement statement = deletePreparedStatement(sql, getDataSource().getConnection(), id)) {
             statement.executeUpdate();
         } catch (Exception exc) {
             log.error("Error deleting entity from DB: " + exc.getMessage());

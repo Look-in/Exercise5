@@ -2,8 +2,10 @@ package by.service;
 
 import by.dao.RaceDao;
 import by.entity.Race;
+import org.apache.ibatis.annotations.Select;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
-import javax.inject.Inject;
 import java.util.List;
 
 /**
@@ -11,10 +13,15 @@ import java.util.List;
  *
  * @author Serg Shankunas <shserg2012@gmail.com>
  */
+@Service
 public class RaceServiceImpl implements RaceService {
 
-    @Inject
     private RaceDao raceDao;
+
+    @Autowired
+    public RaceServiceImpl(RaceDao raceDao) {
+        this.raceDao = raceDao;
+    }
 
     @Override
     public List<Race> getRaces() {

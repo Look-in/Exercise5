@@ -6,8 +6,8 @@ import by.entity.User;
 import by.service.RaceService;
 import by.service.RateService;
 import by.service.UserRateService;
+import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.inject.Inject;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -29,14 +29,18 @@ import java.util.Set;
         urlPatterns = "/place-rate")
 public class PlaceRate extends HttpServlet {
 
-    @Inject
     private RaceService raceService;
 
-    @Inject
     private RateService rateService;
 
-    @Inject
     private UserRateService userRateService;
+
+    @Autowired
+    public PlaceRate(RaceService raceService, RateService rateService, UserRateService userRateService) {
+        this.raceService = raceService;
+        this.rateService = rateService;
+        this.userRateService = userRateService;
+    }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         if ("delete".equalsIgnoreCase(request.getParameter("action"))) {

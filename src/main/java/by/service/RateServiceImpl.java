@@ -4,8 +4,9 @@ import by.dao.RaceDao;
 import by.dao.RateDao;
 import by.dao.RateResultDao;
 import by.entity.Rate;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
-import javax.inject.Inject;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -14,16 +15,21 @@ import java.util.stream.Collectors;
  *
  * @author Serg Shankunas <shserg2012@gmail.com>
  */
+@Service
 public class RateServiceImpl implements RateService {
 
-    @Inject
     private RateDao rateDao;
 
-    @Inject
     private RateResultDao rateResult;
 
-    @Inject
     private RaceDao raceDao;
+
+    @Autowired
+    public RateServiceImpl(RateDao rateDao, RateResultDao rateResult, RaceDao raceDao) {
+        this.rateDao = rateDao;
+        this.rateResult = rateResult;
+        this.raceDao = raceDao;
+    }
 
     @Override
     public List<Rate> getRates() {

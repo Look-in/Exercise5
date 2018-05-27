@@ -3,8 +3,8 @@ package by.controller;
 import by.Utils.HttpServletRequestReflectionUtils;
 import by.entity.Rate;
 import by.service.RateService;
+import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.inject.Inject;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -24,8 +24,12 @@ import java.io.IOException;
 
 public class ModifyRate extends HttpServlet {
 
-    @Inject
     private RateService rateService;
+
+    @Autowired
+    public ModifyRate(RateService rateService) {
+        this.rateService = rateService;
+    }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         if ("delete".equalsIgnoreCase(request.getParameter("action"))) {

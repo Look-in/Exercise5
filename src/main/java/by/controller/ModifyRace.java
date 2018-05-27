@@ -3,13 +3,17 @@ package by.controller;
 import by.Utils.HttpServletRequestReflectionUtils;
 import by.entity.Race;
 import by.entity.Rate;
+import by.entity.RateResult;
 import by.service.RaceService;
 import by.service.RateService;
 import by.service.reference.ReferenceService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
-import javax.inject.Inject;
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -18,26 +22,44 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Сервлет для отображения страницы модификации race.
+ * Контроллер для отображения страницы модификации race.
  *
  * @author Serg Shankunas
  */
-@WebServlet(
-        name = "modify race servlet",
-        description = "Сервлет для отображения страницы модификации race",
-        urlPatterns = "/modify-race")
-
+@Controller
+@RequestMapping("/modify-race")
 public class ModifyRace extends HttpServlet {
 
-    @Inject
     private RaceService raceService;
 
-    @Inject
     private RateService rateService;
 
-    @Inject
     private ReferenceService referenceService;
 
+    @Autowired
+    public ModifyRace(RaceService raceService, RateService rateService, ReferenceService referenceService) {
+        this.raceService = raceService;
+        this.rateService = rateService;
+        this.referenceService = referenceService;
+    }
+
+
+    @ModelAttribute(value = "race")
+    public Race newRequest(@RequestParam(required = false) Integer raceId) {
+        return  (raceId!= null) ? raceService.getRace(raceId) : new Race();
+    }
+
+    @ModelAttribute(value = "rates")
+    public List<Rate> getRates(@RequestParam(required = false) Integer raceId) {
+        return  (raceId != null) ? rateService.getRatesForRace(raceId) : Collections.EMPTY_LIST;
+    }
+
+    @ModelAttribute(value = "rateResults")
+    public List<RateResult> getRateResults() {
+        return  referenceService.getRateResults();
+    }
+
+ /*   @RequestMapping(method = RequestMethod.POST)
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         if ("delete".equalsIgnoreCase(request.getParameter("action"))) {
             doDelete(request, response);
@@ -53,20 +75,13 @@ public class ModifyRace extends HttpServlet {
         }
         request.getSession().setAttribute("message", message);
         response.sendRedirect(request.getContextPath() + "/view-race");
+    }*/
+
+    @RequestMapping(method = RequestMethod.GET)
+    public void doGet() {
     }
 
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        Race race = (request.getParameter("id") != null) ?
-                raceService.getRace(Integer.valueOf(request.getParameter("id"))) :
-                new Race();
-        List<Rate> rates = (race.getId() != null) ? rateService.getRatesForRace(race.getId()) : Collections.EMPTY_LIST;
-        request.setAttribute("race", race);
-        request.setAttribute("rates", rates);
-        request.setAttribute("rateResults", referenceService.getRateResults());
-        request.getRequestDispatcher("WEB-INF/jsp/modify-race.jsp").forward(request, response);
-    }
-
-    protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws IOException {
+ /*   protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String message = null;
         if (request.getParameter("id") != null) {
             int id = Integer.valueOf(request.getParameter("id"));
@@ -79,6 +94,6 @@ public class ModifyRace extends HttpServlet {
         }
         request.getSession().setAttribute("message", message);
         response.sendRedirect(request.getContextPath() + "/view-race");
-    }
+    }*/
 
 }

@@ -3,12 +3,14 @@ package by.dao.jdbc.user;
 import by.dao.UserDao;
 import by.dao.jdbc.BaseJdbcDao;
 import by.entity.User;
+import org.springframework.stereotype.Repository;
 
 /**
  * Реализация {@link UserDao}.
  *
  * @author Serg Shankunas <shserg2012@gmail.com>
  */
+@Repository
 public class UserJdbcDao extends BaseJdbcDao implements UserDao {
 
     @Override

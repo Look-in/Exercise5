@@ -12,8 +12,8 @@
 <head>
     <fmt:message var="title" key="race.title"/>
     <title>${title}</title>
-    <link href="css/global.css" rel="stylesheet" type="text/css">
-    <link href="css/item.css" rel="stylesheet" type="text/css">
+    <link href="<c:url value="../resources/global.css"/>" rel="stylesheet" type="text/css"/>
+    <link href="<c:url value="../resources/item.css"/>" rel="stylesheet" type="text/css"/>
 </head>
 <body>
 <header>

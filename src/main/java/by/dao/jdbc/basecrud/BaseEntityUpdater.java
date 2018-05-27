@@ -24,7 +24,7 @@ import java.util.Set;
 public class BaseEntityUpdater extends BaseEntityCreator {
 
     private PreparedStatement updatePreparedStatement(String sql, Object entity) throws SQLException {
-        PreparedStatement statement = getBaseConnectionKeeper().getConnection().prepareStatement(sql);
+        PreparedStatement statement = getDataSource().getConnection().prepareStatement(sql);
         statement.setObject(1, DaoReflectionUtils.getIdValueFromObject(entity));
         return statement;
     }

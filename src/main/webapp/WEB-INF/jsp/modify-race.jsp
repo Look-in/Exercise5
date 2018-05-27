@@ -10,8 +10,8 @@
 --%>
 <html>
 <head>
-    <link href="css/global.css" rel="stylesheet" type="text/css">
-    <link href="css/item.css" rel="stylesheet" type="text/css">
+    <link href="<c:url value="../resources/global.css"/>" rel="stylesheet" type="text/css"/>
+    <link href="<c:url value="../resources/item.css"/>" rel="stylesheet" type="text/css"/>
     <fmt:message var="title" key="race.modify.title"/>
     <title>${title}</title>
 </head>

@@ -3,6 +3,7 @@ package by.dao.jdbc.race;
 import by.dao.RaceDao;
 import by.dao.jdbc.BaseJdbcDao;
 import by.entity.Race;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
@@ -11,7 +12,8 @@ import java.util.List;
  *
  * @author Serg Shankunas <shserg2012@gmail.com>
  */
-public class RaceJdbcDao extends BaseJdbcDao implements RaceDao {
+@Repository
+public class RaceJdbcDao extends BaseJdbcDao implements RaceDao{
 
     @Override
     public List<Race> getRaces() {
@@ -37,5 +39,4 @@ public class RaceJdbcDao extends BaseJdbcDao implements RaceDao {
     public void delete(Integer id) {
         remove(Race.class, id);
     }
-
 }

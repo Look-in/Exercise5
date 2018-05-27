@@ -2,13 +2,12 @@ package by.dao.jdbc.basecrud;
 
 import by.Utils.ReflectionUtils;
 import by.Utils.annotations.*;
-import by.dao.jdbc.basecrud.connectionkeeper.BaseConnectionKeeper;
 import javassist.util.proxy.MethodHandler;
 import javassist.util.proxy.ProxyFactory;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
-import javax.inject.Inject;
+import javax.sql.DataSource;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.PreparedStatement;
@@ -33,8 +32,7 @@ import java.util.stream.Collectors;
 public class BaseEntityReader {
 
     @Getter
-    @Inject
-    private BaseConnectionKeeper baseConnectionKeeper;
+    DataSource dataSource;
 
     /**
      * Карты для хранения сгенерированных SQL запросов.
@@ -45,14 +43,12 @@ public class BaseEntityReader {
 
     /**
      * Метод проксирования класса с переопределенным методом для поля
-     * помеченным, как Lazy. Если поле null, то подгружает данные из БД.
-     * Для выборки использует новый коннект.
+     * помеченного, как Lazy. Если поле null, то подгружает данные из БД.
      *
      * @param clazz Проксируемый класс
      * @return прокси класс
      */
     @SuppressWarnings("unchecked")
-
     private <T> T getProxyWithLazyFieldInitializationEntity(Class<T> clazz) {
         List<Field> lazyFields = ReflectionUtils.getAllClassFields(clazz)
                 .stream().filter(e -> e.getAnnotation(OneToMany.class) != null &&
@@ -119,7 +115,7 @@ public class BaseEntityReader {
 
     private PreparedStatement selectPreparedStatement(String sql, Object id)
             throws SQLException {
-        PreparedStatement statement = getBaseConnectionKeeper().getConnection().prepareStatement(sql);
+        PreparedStatement statement = dataSource.getConnection().prepareStatement(sql);
         statement.setObject(1, id);
         return statement;
     }
@@ -173,7 +169,7 @@ public class BaseEntityReader {
     protected <T> List<T> findAll(String sql, Class<T> tClass) {
         if (tClass.getAnnotation(Entity.class) == null) return null;
         List<T> entities = new ArrayList<>();
-        try (Statement st = getBaseConnectionKeeper().getConnection().createStatement();
+        try (Statement st = dataSource.getConnection().createStatement();
              ResultSet rs = st.executeQuery(sql)) {
             while (rs.next()) {
                 entities.add(getEntityResultSet(rs, tClass));

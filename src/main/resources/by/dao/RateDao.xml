@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="by.dao.RateDao">
+
+    <select id="getRates" resultType="by.entity.Rate">
+        select *
+        from rate
+    </select>
+
+    <select id="getRate" resultType="by.entity.Rate">
+        select *
+        from rate
+        where id = #{rateId}
+    </select>
+
+    <select id="getRateResultOfRate" resultType="java.lang.Integer">
+        select result_id from rate where id =#{rateId}
+    </select>
+</mapper>

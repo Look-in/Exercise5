@@ -7,8 +7,9 @@
 --%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<link href="css/global.css" rel="stylesheet" type="text/css">
-<link href="css/item.css" rel="stylesheet" type="text/css">
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
+<link href="<c:url value="../resources/global.css"/>" rel="stylesheet" type="text/css"/>
+<link href="<c:url value="../resources/item.css"/>" rel="stylesheet" type="text/css"/>
 <%--ink href="${globalCSS}" rel="stylesheet" />-->
 <%--<link href="/resourses/global.css" rel="stylesheet" type="text/css">
 <link href="/resourses/item.css" rel="stylesheet" type="text/css">--%>
@@ -43,10 +44,10 @@
 </div>
 ${message}<br>
 <div class="parent-item">
-    <%--@elvariable id="race" type="java.util.List"--%>
-    <c:forEach var="elem" items="${race}" varStatus="status">
+    <%--@elvariable id="races" type="java.util.List"--%>
+    <c:forEach var="elem" items="${races}" varStatus="status">
         <div class="img-responsive">
-            <img class="item-image" src="css/images/no-img.png">
+            <img class="item-image" src="${pageContext.request.contextPath}/resources/images/no-img.png">
             <span class="range-txt position-rage-bottom">
     <strong><c:out value="${ elem.race }"/></strong>
     </span>

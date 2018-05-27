@@ -3,6 +3,7 @@ package by.dao.jdbc.race;
 import by.dao.RateDao;
 import by.dao.jdbc.BaseJdbcDao;
 import by.entity.Rate;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
@@ -11,8 +12,8 @@ import java.util.List;
  *
  * @author Serg Shankunas <shserg2012@gmail.com>
  */
-public class RateJdbcDao extends BaseJdbcDao implements RateDao {
-
+public class RateJdbcDao extends BaseJdbcDao {
+/*
     @Override
     public List<Rate> getRates() {
         return findAll(Rate.class);
@@ -41,5 +42,5 @@ public class RateJdbcDao extends BaseJdbcDao implements RateDao {
     @Override
     public void delete(Integer id) {
         remove(Rate.class, id);
-    }
+    }*/
 }

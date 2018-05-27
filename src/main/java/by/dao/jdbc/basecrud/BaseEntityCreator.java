@@ -28,7 +28,7 @@ import java.util.Map;
 public class BaseEntityCreator extends BaseEntityDeleter {
 
     private PreparedStatement createPreparedStatement(String sql) throws SQLException {
-        return getBaseConnectionKeeper().getConnection().prepareStatement(sql);
+        return getDataSource().getConnection().prepareStatement(sql);
     }
 
     /**
