@@ -4,11 +4,25 @@
 <mapper namespace="by.dao.RaceDao">
 
     <select id="getRaces" resultType="by.entity.Race">
-        select id, race from race
+        select
+            id,
+            race
+        from race
     </select>
 
     <select id="getRace" resultType="by.entity.Race">
-        select * from race where id = #{id}
+        select
+            id,
+            race
+        from race
+        where race.id = #{id}
     </select>
+
+    <update id="update" parameterType="by.entity.Race">
+        UPDATE race
+        SET
+            race = #{race}
+        WHERE ID = #{id}
+    </update>
 
 </mapper>

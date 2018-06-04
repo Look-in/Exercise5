@@ -42,7 +42,9 @@
         <a href="${addurl}"><fmt:message key="button.add"/></a>
     </div>
 </div>
-${message}<br>
+<div>
+    ${ param.message=="" ? "" : param.message }
+</div>
 <div class="parent-item">
     <%--@elvariable id="races" type="java.util.List"--%>
     <c:forEach var="elem" items="${races}" varStatus="status">
@@ -51,23 +53,29 @@ ${message}<br>
             <span class="range-txt position-rage-bottom">
     <strong><c:out value="${ elem.race }"/></strong>
     </span>
-            <c:url var="editurl" value="/modify-race">
-                <c:param name="id" value="${elem.id}"/>
-            </c:url>
-            <c:url var="showurl" value="/place-rate">
-                <c:param name="id" value="${elem.id}"/>
-            </c:url>
-            <a class="item edit" ${user.role.role == 'client' or user == null ? 'hidden="true"' : '' } href="${editurl}"><fmt:message
-                    key="button.edit"/></a>
-            <a class="item edit" ${user.role.role == 'client' ? '' : 'hidden="true"' } href="${showurl}"><fmt:message
-                    key="race.show"/></a>
-            <div class="item delete" ${user.role.role == 'bookmaker' ? '' : 'hidden="true"'}>
+            <sec:authorize access="hasRole('CLIENT')">
+                <c:url var="showurl" value="/place-rate">
+                    <c:param name="id" value="${elem.id}"/>
+                </c:url>
+                <a class="item edit" href="${showurl}"><fmt:message
+                        key="race.show"/></a>
+            </sec:authorize>
+            <sec:authorize access="hasAnyRole('ADMINISTRATOR', 'BOOKMAKER')">
+                <c:url var="editurl" value="/modify-race">
+                    <c:param name="id" value="${elem.id}"/>
+                </c:url>
+                <a class="item edit" href="${editurl}"><fmt:message
+                        key="button.edit"/></a>
+            </sec:authorize>
+            <sec:authorize access="hasRole('BOOKMAKER')">
+            <div class="item delete">
                 <form name="Delete" action="<c:url value="/modify-race"/>" method="POST">
                     <input type="hidden" name="id" value="${ elem.id }">
                     <input type="hidden" name="action" value="delete">
                     <input type="submit" name="button" value=<fmt:message key="button.delete"/>>
                 </form>
             </div>
+            </sec:authorize>
         </div>
     </c:forEach>
 </div>

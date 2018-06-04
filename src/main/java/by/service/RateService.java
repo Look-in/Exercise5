@@ -11,9 +11,7 @@ import java.util.List;
  */
 public interface RateService {
 
-    List<Rate> getRates();
-
-    List<Rate> getRatesForRace(int raceId);
+    List<Rate> getRates(int id);
 
     boolean isAllNewRates(int raceId);
 
@@ -26,6 +24,4 @@ public interface RateService {
     Rate getNewRate(int raceId);
 
     int getRateResultOfRate(int rateId);
-
-    boolean hasRates(int raceId);
 }

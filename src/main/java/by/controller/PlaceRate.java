@@ -68,7 +68,7 @@ public class PlaceRate extends HttpServlet {
         Race race = (request.getParameter("id") != null) ?
                 raceService.getRace(Integer.valueOf(request.getParameter("id"))) : new Race();
         if (race.getId() != null) {
-            List<Rate> rates = (race.getId() != null) ? rateService.getRatesForRace(race.getId()) : Collections.EMPTY_LIST;
+            List<Rate> rates = (race.getId() != null) ? rateService.getRates(race.getId()) : Collections.EMPTY_LIST;
             request.setAttribute("rates", rates);
         } else {
             User user = (User) request.getSession().getAttribute("user");

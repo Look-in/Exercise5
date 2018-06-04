@@ -8,6 +8,8 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
+import org.springframework.security.web.csrf.CsrfFilter;
+import org.springframework.web.filter.CharacterEncodingFilter;
 
 import javax.sql.DataSource;
 
@@ -18,7 +20,7 @@ import javax.sql.DataSource;
  * @author Serg Shankunas <shserg2012@gmail.com>
  */
 @Configuration
-@EnableWebSecurity
+@EnableWebSecurity(debug = false)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
@@ -46,14 +48,17 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        System.out.println(http.authorizeRequests().toString());
+        CharacterEncodingFilter filter = new CharacterEncodingFilter();
+        filter.setEncoding("UTF-8");
+        filter.setForceEncoding(true);
+        http.addFilterBefore(filter,CsrfFilter.class);
         http.authorizeRequests()
                 .antMatchers("/login/**").access("hasAnyRole('ROLE_ADMINISTRATOR', 'ROLE_CLIENT', 'ROLE_BOOKMAKER')")
                 .antMatchers("/place**").access("hasRole('ROLE_CLIENT')")
                 .antMatchers("/modify-**").access("hasAnyRole('ROLE_ADMINISTRATOR', 'ROLE_BOOKMAKER')")
+                .antMatchers("/modify-rate/change-rateResult").hasRole("ADMINISTRATOR")
                 .antMatchers("/delete**").access("hasRole('ROLE_BOOKMAKER')")
-                .antMatchers("/change-rateResult**").access("hasRole('ROLE_ADMINISTRATOR')")
-                .and().exceptionHandling().accessDeniedPage("/403")
+                .and().exceptionHandling().accessDeniedPage("/WEB-INF/jsp/403.jsp")
                 .and().logout().logoutSuccessUrl("/view-race")
                 .and().formLogin().defaultSuccessUrl("/", false);
     }

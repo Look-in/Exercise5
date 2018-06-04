@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Реализация {@link RateService}.
@@ -32,25 +31,14 @@ public class RateServiceImpl implements RateService {
     }
 
     @Override
-    public List<Rate> getRates() {
-        return rateDao.getRates();
-    }
-
-    @Override
-    public List<Rate> getRatesForRace(int raceId) {
-        return rateDao.getRates().stream().filter(e -> e.getRace().getId() == raceId)
-                .collect(Collectors.toList());
+    public List<Rate> getRates(int id) {
+        return rateDao.getRates(id);
     }
 
     @Override
     public boolean isAllNewRates(int raceId) {
-        return rateDao.getRates().stream().filter(e -> e.getRace().getId() == raceId)
+        return rateDao.getRates(raceId).stream().filter(e -> e.getRace().getId() == raceId)
                 .noneMatch(e -> e.getRateResult().getId() != 1);
-    }
-
-    @Override
-    public boolean hasRates(int raceId) {
-        return rateDao.getRates().stream().anyMatch(e -> e.getRace().getId() == raceId);
     }
 
     @Override

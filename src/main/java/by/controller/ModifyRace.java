@@ -1,6 +1,5 @@
 package by.controller;
 
-import by.Utils.HttpServletRequestReflectionUtils;
 import by.entity.Race;
 import by.entity.Rate;
 import by.entity.RateResult;
@@ -13,11 +12,9 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.support.SessionStatus;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
@@ -28,7 +25,7 @@ import java.util.List;
  */
 @Controller
 @RequestMapping("/modify-race")
-public class ModifyRace extends HttpServlet {
+public class ModifyRace {
 
     private RaceService raceService;
 
@@ -43,15 +40,14 @@ public class ModifyRace extends HttpServlet {
         this.referenceService = referenceService;
     }
 
-
     @ModelAttribute(value = "race")
-    public Race newRequest(@RequestParam(required = false) Integer raceId) {
-        return  (raceId!= null) ? raceService.getRace(raceId) : new Race();
+    public Race newRequest(@RequestParam(required = false) Integer id) {
+        return  (id!= null) ? raceService.getRace(id) : new Race();
     }
 
     @ModelAttribute(value = "rates")
-    public List<Rate> getRates(@RequestParam(required = false) Integer raceId) {
-        return  (raceId != null) ? rateService.getRatesForRace(raceId) : Collections.EMPTY_LIST;
+    public List<Rate> getRates(@RequestParam(required = false) Integer id) {
+        return  (id != null) ? rateService.getRates(id) : Collections.EMPTY_LIST;
     }
 
     @ModelAttribute(value = "rateResults")
@@ -59,23 +55,19 @@ public class ModifyRace extends HttpServlet {
         return  referenceService.getRateResults();
     }
 
- /*   @RequestMapping(method = RequestMethod.POST)
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        if ("delete".equalsIgnoreCase(request.getParameter("action"))) {
-            doDelete(request, response);
-            return;
-        }
-        Race race = HttpServletRequestReflectionUtils.getEntityFromHttpRequest(Race.class, request, null);
+    @RequestMapping(method = RequestMethod.POST)
+    public String doPost(Race race, RedirectAttributes redirectAttributes, SessionStatus sessionStatus) {
         String message;
-        if (race.getId() == null || rateService.isAllNewRates(race.getId())) {
+        if (race == null || rateService.isAllNewRates(race.getId())) {
             raceService.pushRace(race);
             message = String.format("Забег %s сохранён", race.getId());
         } else {
             message = String.format("Невозможно сохранить забег %s. В забеге есть сыгранные ставки", race.getId());
         }
-        request.getSession().setAttribute("message", message);
-        response.sendRedirect(request.getContextPath() + "/view-race");
-    }*/
+        redirectAttributes.addAttribute("message", message);
+        sessionStatus.setComplete();
+        return "redirect:/view-race";
+    }
 
     @RequestMapping(method = RequestMethod.GET)
     public void doGet() {

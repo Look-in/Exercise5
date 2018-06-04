@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import javax.servlet.http.HttpServlet;
 import java.util.List;
 
 /**
@@ -21,7 +20,7 @@ import java.util.List;
  */
 @Controller
 @RequestMapping("/view-race")
-public class ViewRace extends HttpServlet {
+public class ViewRace {
 
     private RaceService raceService;
 

@@ -11,7 +11,7 @@ import java.util.List;
  */
 public interface RateDao extends ChangeInstance<Rate> {
 
-    List<Rate> getRates();
+    List<Rate> getRates(int id);
 
     Rate getRate(int rateId);
 

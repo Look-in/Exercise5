@@ -1,63 +1,63 @@
 package by.controller;
 
-import by.Utils.HttpServletRequestReflectionUtils;
 import by.entity.Rate;
 import by.service.RateService;
+import by.service.reference.ReferenceService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.support.SessionStatus;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 
 /**
- * Сервлет для отображения страницы модификации rate.
+ * Контроллер для отображения страницы модификации rate.
  *
  * @author Serg Shankunas
  */
-@WebServlet(
-        name = "modify rate servlet",
-        description = "Сервлет для отображения страницы модификации rate",
-        urlPatterns = "/modify-rate")
-
+@Controller
 public class ModifyRate extends HttpServlet {
 
     private RateService rateService;
 
+    private ReferenceService referenceService;
+
     @Autowired
-    public ModifyRate(RateService rateService) {
+    public ModifyRate(RateService rateService, ReferenceService referenceService) {
         this.rateService = rateService;
+        this.referenceService = referenceService;
     }
 
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        if ("delete".equalsIgnoreCase(request.getParameter("action"))) {
+    @ModelAttribute(value = "race")
+    public Rate newRequest(@RequestParam Integer raceId, @RequestParam(required = false) Integer id) {
+        return  id != null ? rateService.getRate(id) : rateService.getNewRate(raceId);
+    }
+
+
+    @RequestMapping(value = "/modify-rate", method = RequestMethod.POST)
+    public String doPost(Rate rate, RedirectAttributes redirectAttributes, SessionStatus sessionStatus) {
+      /*  if ("delete".equalsIgnoreCase(request.getParameter("action"))) {
             doDelete(request, response);
             return;
-        }
+        }*/
         String message;
-        Rate rate = HttpServletRequestReflectionUtils.getEntityFromHttpRequest(Rate.class, request, null);
-        if (rateService.isAllNewRates(rate.getRace().getId())) {
+        if (rate.getRace() != null && rateService.isAllNewRates(rate.getRace().getId())) {
             rateService.pushRate(rate);
             message = String.format("Ставка %s сохранена", rate.getId());
         } else {
             message = String.format("Невозможно сохранить ставку %s. В забеге есть сыгранные ставки", rate.getId());
         }
-        request.getSession().setAttribute("message", message);
-        response.sendRedirect(request.getContextPath() + "/modify-race?id=" + rate.getRace().getId());
+        redirectAttributes.addAttribute("message", message);
+        sessionStatus.setComplete();
+        return "redirect:/modify-race?id=" + rate.getRace().getId();
     }
 
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        int raceId = (request.getParameter("raceId") != null) ? Integer.valueOf(request.getParameter("raceId")) : 0;
-        Rate rate = (request.getParameter("id") != null) ?
-                rateService.getRate(Integer.valueOf(request.getParameter("id"))) :
-                rateService.getNewRate(raceId);
-        request.setAttribute("rate", rate);
-        request.getRequestDispatcher("WEB-INF/jsp/modify-rate.jsp").forward(request, response);
+    @RequestMapping(value = "/modify-rate", method = RequestMethod.GET)
+    public void doGet() {
     }
 
-    protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    /*protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String message = null;
         if (request.getParameter("id") != null) {
             int id = Integer.valueOf(request.getParameter("id"));
@@ -74,6 +74,18 @@ public class ModifyRate extends HttpServlet {
         } else {
             response.sendRedirect(request.getContextPath() + "/view-race");
         }
+    }*/
+
+    @RequestMapping(value = "/modify-rate/change-rateResult", method = RequestMethod.POST)
+    public String changeRateResult(@RequestParam Integer raceId, @RequestParam Integer rateId, @RequestParam Integer rateResult,
+                                   RedirectAttributes redirectAttributes, SessionStatus sessionStatus) {
+        Rate rate = rateService.getRate(rateId);
+        rate.setRateResult(referenceService.getRateResult(rateResult));
+        rateService.pushRate(rate);
+        String message = String.format("Результат ставки '%s' изменен на '%s'", rate.getRate(), rate.getRateResult().getRateResult());
+        redirectAttributes.addAttribute("message", message);
+        sessionStatus.setComplete();
+        return "redirect:/modify-race?id=" + "/modify-race?id=" + raceId;
     }
 
 }

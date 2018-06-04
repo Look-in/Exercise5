@@ -12,7 +12,7 @@ import java.util.List;
  *
  * @author Serg Shankunas <shserg2012@gmail.com>
  */
-@Repository
+
 public class RaceJdbcDao extends BaseJdbcDao implements RaceDao{
 
     @Override

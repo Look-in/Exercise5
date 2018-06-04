@@ -4,6 +4,8 @@ import by.Utils.annotations.Entity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.util.List;
+
 /**
  * Сущность забег.
  *

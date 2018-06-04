@@ -4,8 +4,6 @@
   Date: 02.04.2018
   Time: 9:30
 --%>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <html>
 <head>
     <title>Access Denied</title>
