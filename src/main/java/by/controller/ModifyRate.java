@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServlet;
  * @author Serg Shankunas
  */
 @Controller
+@RequestMapping("/modify-rate")
 public class ModifyRate extends HttpServlet {
 
     private RateService rateService;
@@ -34,8 +35,7 @@ public class ModifyRate extends HttpServlet {
         return  id != null ? rateService.getRate(id) : rateService.getNewRate(raceId);
     }
 
-
-    @RequestMapping(value = "/modify-rate", method = RequestMethod.POST)
+    @RequestMapping(method = RequestMethod.POST)
     public String doPost(Rate rate, RedirectAttributes redirectAttributes, SessionStatus sessionStatus) {
       /*  if ("delete".equalsIgnoreCase(request.getParameter("action"))) {
             doDelete(request, response);
@@ -53,7 +53,7 @@ public class ModifyRate extends HttpServlet {
         return "redirect:/modify-race?id=" + rate.getRace().getId();
     }
 
-    @RequestMapping(value = "/modify-rate", method = RequestMethod.GET)
+    @RequestMapping(method = RequestMethod.GET)
     public void doGet() {
     }
 
@@ -76,16 +76,16 @@ public class ModifyRate extends HttpServlet {
         }
     }*/
 
-    @RequestMapping(value = "/modify-rate/change-rateResult", method = RequestMethod.POST)
-    public String changeRateResult(@RequestParam Integer raceId, @RequestParam Integer rateId, @RequestParam Integer rateResult,
+    @RequestMapping(value = "/change-rateResult", method = RequestMethod.POST)
+    public String changeRateResult(Integer raceId, Integer rateId, Integer rateResult,
                                    RedirectAttributes redirectAttributes, SessionStatus sessionStatus) {
         Rate rate = rateService.getRate(rateId);
         rate.setRateResult(referenceService.getRateResult(rateResult));
         rateService.pushRate(rate);
         String message = String.format("Результат ставки '%s' изменен на '%s'", rate.getRate(), rate.getRateResult().getRateResult());
-        redirectAttributes.addAttribute("message", message);
+        redirectAttributes.addFlashAttribute("message", message);
         sessionStatus.setComplete();
-        return "redirect:/modify-race?id=" + "/modify-race?id=" + raceId;
+        return "redirect:/modify-race?id="  + raceId;
     }
 
 }

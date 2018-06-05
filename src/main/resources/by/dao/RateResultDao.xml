@@ -3,13 +3,19 @@
 <mapper namespace="by.dao.RateResultDao">
 
 
-
     <select id="getRateResults" resultType="by.entity.RateResult">
-        select id, result as rateResult from rate_result
+        select
+            id,
+            result as rateResult
+        from rate_result
     </select>
 
     <select id="getRateResult" resultType="by.entity.RateResult">
-        select * from rate_result where id = #{rateResultId}
+        select
+            id,
+            result as rateResult
+        from rate_result
+        where id = #{rateResultId}
     </select>
 
 </mapper>

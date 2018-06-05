@@ -61,18 +61,19 @@ ${message}<br>
             <a class="item edit" ${elem.rateResult.id == 1 and user.role.role == 'bookmaker' ? '' : 'hidden="true"' }
                href="${editurl}"><fmt:message
                     key="button.edit"/></a>
-            <div class="item delete" ${race.id != null and (user.role.role == 'administrator' or elem.rateResult.id == 1) ? '' : 'hidden="true"' } >
+            <div class="item delete" ${race.id != null and (pageContext.request.isUserInRole('ADMINISTRATOR') or elem.rateResult.id == 1) ? '' : 'hidden="true"' } >
                 <sec:authorize access="hasRole('ADMINISTRATOR')">
-                    <form action="/modify-rate/change-rateResult" method="POST">
+                    <form:form action="/modify-rate/change-rateResult" method="POST">
                         <input type="hidden" name="rateId" value="${  elem.id }">
                         <input type="hidden" name="raceId" value="${  race.id }">
                         <select name="rateResult" onchange="this.form.submit()">
+                            <%--@elvariable id="rateResults" type="java.util.List"--%>
                             <c:forEach var="result" items="${rateResults}">
                                 <option ${result.id == elem.rateResult.id ? 'selected="true"' : ''}
                                         value="${result.id}">${result.rateResult}</option>
                             </c:forEach>
                         </select>
-                    </form>
+                    </form:form>
                 </sec:authorize>
                 <sec:authorize access="hasRole('BOOKMAKER')">
                     <form name="Delete" action="<c:url value="/modify-rate"/>" method="POST">

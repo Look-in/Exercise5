@@ -56,7 +56,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/login/**").access("hasAnyRole('ROLE_ADMINISTRATOR', 'ROLE_CLIENT', 'ROLE_BOOKMAKER')")
                 .antMatchers("/place**").access("hasRole('ROLE_CLIENT')")
                 .antMatchers("/modify-**").access("hasAnyRole('ROLE_ADMINISTRATOR', 'ROLE_BOOKMAKER')")
-                .antMatchers("/modify-rate/change-rateResult").hasRole("ADMINISTRATOR")
+                .antMatchers("/modify-rate/change-rateResult").access("hasRole('ROLE_ADMINISTRATOR')")
                 .antMatchers("/delete**").access("hasRole('ROLE_BOOKMAKER')")
                 .and().exceptionHandling().accessDeniedPage("/WEB-INF/jsp/403.jsp")
                 .and().logout().logoutSuccessUrl("/view-race")

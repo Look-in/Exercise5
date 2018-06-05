@@ -10,33 +10,49 @@
             <result property="rateResult" column="result"/>
         </association>
         <association property="race" javaType="by.entity.Race">
-        <id property="id" column="race_id"/>
-        <result property="race" column="race"/>
+            <id property="id" column="race_id"/>
+            <result property="race" column="race"/>
         </association>
     </resultMap>
 
     <select id="getRates" resultMap="RateMap">
-        select rate.id as id,
-            race_id, race, rate, result_id, result
-        from rate inner join race on (rate.race_id = race.id)
-        inner join rate_result on rate.result_id = rate_result.id
+        select
+            rate.id as id,
+            race_id,
+            race,
+            rate,
+            result_id,
+            result
+        from rate
+            inner join race on (rate.race_id = race.id)
+            inner join rate_result on rate.result_id = rate_result.id
         where race_id = #{id}
+        order by rate.id
     </select>
 
-    <select id="getRate" resultType="by.entity.Rate">
-        select rate.id as rate_id,
-            race_id, race, rate, result_id, result
-        from rate inner join race on (rate.race_id = race.id)
+    <select id="getRate" resultMap="RateMap">
+        select
+            rate.id as id,
+            race_id,
+            race,
+            rate,
+            result_id,
+            result
+        from rate
+            inner join race on (rate.race_id = race.id)
             inner join rate_result on rate.result_id = rate_result.id
-        where race_id = #{rateId}
+        where rate.id = #{rateId}
     </select>
 
     <select id="getRateResultOfRate" resultType="java.lang.Integer">
-        select result_id from rate where id =#{rateId}
+        select result_id
+        from rate
+        where id = #{rateId}
     </select>
 
-    <update id = "update" parameterType = "by.entity.Rate">
-        UPDATE rate SET rate = #{rate}
+    <update id="update" parameterType="by.entity.Rate">
+        UPDATE rate
+        SET rate = #{rate}, result_id = #{rateResult.id}
         WHERE ID = #{id};
     </update>
 
