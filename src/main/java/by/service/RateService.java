@@ -24,4 +24,6 @@ public interface RateService {
     Rate getNewRate(int raceId);
 
     int getRateResultOfRate(int rateId);
+
+    void changeRateResult(int rateId, int rateResult);
 }

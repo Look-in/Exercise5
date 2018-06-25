@@ -16,4 +16,6 @@ public interface RateDao extends ChangeInstance<Rate> {
     Rate getRate(int rateId);
 
     int getRateResultOfRate(int rateId);
+
+    void changeRateResult(int rateId, int rateResult);
 }

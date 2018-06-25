@@ -56,4 +56,10 @@
         WHERE ID = #{id};
     </update>
 
+    <update id="changeRateResult">
+        update rate
+        set result_id = #{param2}
+        where id = #{param1}
+    </update>
+
 </mapper>

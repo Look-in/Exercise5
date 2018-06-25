@@ -73,4 +73,9 @@ public class RateServiceImpl implements RateService {
     public int getRateResultOfRate(int rateId) {
         return rateDao.getRateResultOfRate(rateId);
     }
+
+    @Override
+    public void changeRateResult(int rateId, int rateResult) {
+        rateDao.changeRateResult(rateId, rateResult);
+    }
 }

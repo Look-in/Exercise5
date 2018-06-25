@@ -31,8 +31,8 @@ public class ModifyRate extends HttpServlet {
     }
 
     @ModelAttribute(value = "race")
-    public Rate newRequest(@RequestParam Integer raceId, @RequestParam(required = false) Integer id) {
-        return  id != null ? rateService.getRate(id) : rateService.getNewRate(raceId);
+    public Rate newRequest(@RequestParam (required = false) Integer raceId, @RequestParam(required = false) Integer id) {
+        return raceId == null ? null : id != null ? rateService.getRate(id) : rateService.getNewRate(raceId);
     }
 
     @RequestMapping(method = RequestMethod.POST)
@@ -76,16 +76,9 @@ public class ModifyRate extends HttpServlet {
         }
     }*/
 
-    @RequestMapping(value = "/change-rateResult", method = RequestMethod.POST)
-    public String changeRateResult(Integer raceId, Integer rateId, Integer rateResult,
-                                   RedirectAttributes redirectAttributes, SessionStatus sessionStatus) {
-        Rate rate = rateService.getRate(rateId);
-        rate.setRateResult(referenceService.getRateResult(rateResult));
-        rateService.pushRate(rate);
-        String message = String.format("Результат ставки '%s' изменен на '%s'", rate.getRate(), rate.getRateResult().getRateResult());
-        redirectAttributes.addFlashAttribute("message", message);
-        sessionStatus.setComplete();
-        return "redirect:/modify-race?id="  + raceId;
+    @RequestMapping(value = "/change-rateResult", method = RequestMethod.POST, produces = "text/plain;charset=UTF-8")
+    public @ResponseBody String changeRateResult(Integer rateId, Integer rateResult) {
+        rateService.changeRateResult(rateId, rateResult);
+        return String.format("Результат ставки '%s' изменен на '%s'", rateId, rateResult);
     }
-
 }
